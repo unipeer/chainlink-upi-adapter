@@ -1,4 +1,4 @@
-import * as paypal from "paypal-rest-sdk";
+import fetch from "node-fetch";
 
 class Response {
     jobRunID: string;
@@ -33,12 +33,6 @@ export class SendRequest extends Request {
     email_message?: string
 }
 
-paypal.configure({
-    "mode": process.env.MODE || "live",
-    "client_id": process.env.CLIENT_ID,
-    "client_secret": process.env.CLIENT_SECRET
-});
-
 const sendPayout = async (data: SendRequest) => {
     return new Promise(((resolve, reject) => {
         if (!('amount' in data) || !('receiver' in data)) {
@@ -66,10 +60,7 @@ const sendPayout = async (data: SendRequest) => {
             ]
         };
 
-        paypal.payout.create(payoutItem, true, (error: any, payout: any) => {
-            if (error) return reject({statusCode: error.httpStatusCode, data: error});
-            return resolve({statusCode: payout.httpStatusCode, data: payout});
-        })
+        return reject({statusCode: 503, data: "Not Implemented!"});
     }))
 };
 
@@ -78,23 +69,7 @@ const getPayout = async (data: GetRequest) => {
         if (!('payout_id' in data))
             return reject({statusCode: 400, data: "missing required parameters"});
 
-        let type = data.type || "batch";
-        let request;
-        switch (type.toLowerCase()) {
-            case "item":
-                request = paypal.payoutItem;
-                break;
-            case "batch":
-                request = paypal.payout;
-                break;
-            default:
-                return reject({statusCode: 400, data: "invalid method"});
-        }
-
-        request.get(data.payout_id, (error: any, payout: any) => {
-            if (error) return reject({statusCode: error.httpStatusCode, data: error});
-            return resolve({statusCode: payout.httpStatusCode, data: payout});
-        })
+        return reject({statusCode: 503, data: "Not Implemented!"});
     }))
 };
 
