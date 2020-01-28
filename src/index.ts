@@ -1,9 +1,12 @@
 import fetch from "node-fetch";
+import {Request} from "./types";
+import {collectRequestHandle, CollectRequest} from "./handlers";
 
 class Response {
     jobRunID: string;
     statusCode: number;
     status?: string;
+    pending?: boolean;
     data?: any;
     error?: any;
 }
@@ -13,56 +16,10 @@ export class JobRequest {
     data: Request;
 }
 
-export class Request {
-    method?: string;
-}
-
 export class GetRequest extends Request {
     payout_id: string;
     type?: string;
 }
-
-export class SendRequest extends Request {
-    amount: string;
-    receiver: string;
-    currency?: string;
-    recipient_type?: string;
-    note?: string;
-    sender_item_id?: string;
-    email_subject?: string;
-    email_message?: string
-}
-
-const sendPayout = async (data: SendRequest) => {
-    return new Promise(((resolve, reject) => {
-        if (!('amount' in data) || !('receiver' in data)) {
-            return reject({statusCode: 400, data: "missing required parameters"});
-        }
-
-        let sender_batch_id = Math.random().toString(36).substring(9);
-        let payoutItem = {
-            "sender_batch_header": {
-                "sender_batch_id": sender_batch_id,
-                "email_subject": data.email_subject || "",
-                "email_message": data.email_message || "",
-            },
-            "items": [
-                {
-                    "recipient_type": data.recipient_type || "EMAIL",
-                    "amount": {
-                        "value": data.amount,
-                        "currency": data.currency || "USD"
-                    },
-                    "receiver": data.receiver,
-                    "note": data.note || "",
-                    "sender_item_id": data.sender_item_id || ""
-                }
-            ]
-        };
-
-        return reject({statusCode: 503, data: "Not Implemented!"});
-    }))
-};
 
 const getPayout = async (data: GetRequest) => {
     return new Promise(((resolve, reject) => {
@@ -78,8 +35,8 @@ export const createRequest = async (input: JobRequest) => {
         const data = input.data;
         const method = process.env.API_METHOD || data.method || "";
         switch (method.toLowerCase()) {
-            case "sendpayout":
-                sendPayout(<SendRequest>data)
+            case "collectrequest":
+                collectRequestHandle(<CollectRequest>data)
                     .then((response: any) => {
                         response.data.result = response.data.batch_header.payout_batch_id || "";
                         return resolve(response);
@@ -102,7 +59,8 @@ export const requestWrapper = async (req: JobRequest): Promise<Response> => {
     return new Promise<Response>(resolve => {
         let response = <Response>{jobRunID: req.id || ""};
         createRequest(req).then(({statusCode, data}) => {
-            response.status = "success";
+            response.status = data.status || "success";
+            response.pending = data.status === "pending";
             response.data = data;
             response.statusCode = statusCode;
             resolve(response)

@@ -1,4 +1,6 @@
-import {GetRequest, JobRequest, Request, requestWrapper, SendRequest} from './index';
+import {GetRequest, JobRequest, requestWrapper} from './index';
+import {Request } from './types';
+import {CollectRequest } from './handlers';
 import {assert} from 'chai';
 import 'mocha';
 
@@ -24,7 +26,7 @@ describe('create request', () => {
         let payoutId = "";
 
         it('should send payment/payout', (done) => {
-            req.data = <SendRequest>{
+            req.data = <CollectRequest>{
                 method: "sendPayout",
                 amount: process.env.TEST_AMOUNT || 10,
                 currency: process.env.TEST_CURRENCY || "USD",
@@ -70,7 +72,7 @@ describe('create request', () => {
         }).timeout(timeout);
 
         it('should fail sendPayout with missing amount', (done) => {
-            req.data = <SendRequest>{
+            req.data = <CollectRequest>{
                 method: "sendPayout",
                 receiver: "your-buyer@example.com"
             };
