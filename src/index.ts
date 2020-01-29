@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import {Request} from "./types";
 import {collectRequestHandle, CollectRequest} from "./handlers";
 
