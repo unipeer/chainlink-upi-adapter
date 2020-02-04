@@ -1,12 +1,12 @@
-import {GetRequest, JobRequest, requestWrapper} from './index';
-import {Request } from './types';
-import {CollectRequest } from './handlers';
+import {JobRequest, requestWrapper} from './index';
+import {Request, CollectRequest, GetStatusRequest} from "./types";
 import {assert} from 'chai';
 import 'mocha';
 
 describe('create request', () => {
     context('requests data', () => {
         const jobID = "278c97ffadb54a5bbb93cfec5f7b5503";
+        const deviceId = "b0ce6071-c366-4871-bd79-834dad1cef9b";
         const req = <JobRequest>{
             id: jobID,
             data: <Request>{}
@@ -25,12 +25,13 @@ describe('create request', () => {
 
         let payoutId = "";
 
-        it('should send payment/payout', (done) => {
+        it('should send Collect Request', (done) => {
             req.data = <CollectRequest>{
-                method: "sendPayout",
+                method: "collectRequest",
+                deviceId: deviceId,
                 amount: process.env.TEST_AMOUNT || 10,
-                currency: process.env.TEST_CURRENCY || "USD",
-                receiver: process.env.TEST_RECEIVER || "your-buyer@example.com"
+                sender: process.env.TEST_SENDER || "your-buyer@upi",
+                receiver: process.env.TEST_RECEIVER || "your-seller@upi"
             };
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 201, "status code");
@@ -42,10 +43,12 @@ describe('create request', () => {
             });
         }).timeout(timeout);
 
-        it('should get payout details', (done) => {
-            req.data = <GetRequest>{
-                method: "getPayout",
-                payout_id: process.env.TEST_PAYOUT_ID || payoutId
+        it('should get Tx status details', (done) => {
+            req.data = <GetStatusRequest>{
+                method: "getStatus",
+                deviceId: deviceId,
+                sender: process.env.TEST_SENDER || "your-buyer@upi",
+                txId: process.env.TEST_TXID || "2ff1fb2a-6c81-4fa1-97f5-892d1934b528",
             };
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 200, "status code");
@@ -56,10 +59,10 @@ describe('create request', () => {
             });
         }).timeout(timeout);
 
-        it('should get payout details using ENV variable', (done) => {
-            process.env.API_METHOD = "getPayout";
+        it('should get Tx Status details using ENV variable', (done) => {
+            process.env.API_METHOD = "getStatus";
             req.data = <Request>{
-                method: "sendPayout",
+                method: "collectRequest",
                 payout_id: process.env.TEST_PAYOUT_ID || payoutId
             };
             requestWrapper(req).then((response) => {
@@ -71,9 +74,9 @@ describe('create request', () => {
             });
         }).timeout(timeout);
 
-        it('should fail sendPayout with missing amount', (done) => {
+        it('should fail collectRequest with missing amount', (done) => {
             req.data = <CollectRequest>{
-                method: "sendPayout",
+                method: "collectRequest",
                 receiver: "your-buyer@example.com"
             };
             requestWrapper(req).then((response) => {
@@ -84,9 +87,9 @@ describe('create request', () => {
             });
         }).timeout(timeout);
 
-        it('should fail sendPayout with missing receiver', (done) => {
+        it('should fail collectRequest with missing receiver', (done) => {
             req.data = <Request>{
-                method: "sendPayout",
+                method: "collectRequest",
                 amount: 10
             };
             requestWrapper(req).then((response) => {
@@ -97,9 +100,9 @@ describe('create request', () => {
             });
         }).timeout(timeout);
 
-        it('should fail getPayout with missing payout id', (done) => {
-            req.data = <GetRequest>{
-                method: "getPayout"
+        it('should fail getStatus with missing payout id', (done) => {
+            req.data = <GetStatusRequest>{
+                method: "getStatus"
             };
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 400, "status code");

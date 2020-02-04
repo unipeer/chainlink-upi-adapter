@@ -10,11 +10,11 @@ curl -H "Content-Type: application/json" -H "apikey: l7xx062b5f407bb14a719d0986f
 Payload:
 ```json
 {
+  "profileId": "10",
   "MobileNumber": "902890XXXX",
   "deviceId": "8452165486XXXX",
   "seqNumber": "ef1e92b4a01d4618a0eca5fdecc37ff23f3",
   "channelcode": "ImoXXXX",
-  "profileId": "10",
   "VirtualAddress": "TEST@psp",
   "payeename": "RohitPatekar"
 }

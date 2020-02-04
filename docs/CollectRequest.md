@@ -13,6 +13,7 @@ curl -H "Content-Type: application/json" -H "apikey: l7xx062b5f407bb14a719d0986f
 Payload:
 ```json
 {
+  "ProfileId": "10",
   "AccountProvider": "5",
   "Payeeva": "lmn@xyz",
   "Payerva": "abc@xyz",
@@ -20,7 +21,6 @@ Payload:
   "DeviceId": "84521654XXXXXX",
   "seqNumber": "ef1e92b4a01d4618a0eca5fdecc37ff23f3",
   "Note": "taxibill",
-  "ProfileId": "10",
   "Channelcode": "IMobileNumber",
   "Expireafter": "10"
 }

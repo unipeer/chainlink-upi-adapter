@@ -1,5 +1,5 @@
-import {Request} from "./types";
-import {collectRequestHandle, CollectRequest} from "./handlers";
+import {Request, CollectRequest, GetStatusRequest} from "./types";
+import {collectRequestHandle, getTxStatusHandle} from "./handlers";
 
 class Response {
     jobRunID: string;
@@ -15,34 +15,20 @@ export class JobRequest {
     data: Request;
 }
 
-export class GetRequest extends Request {
-    payout_id: string;
-    type?: string;
-}
-
-const getPayout = async (data: GetRequest) => {
-    return new Promise(((resolve, reject) => {
-        if (!('payout_id' in data))
-            return reject({statusCode: 400, data: "missing required parameters"});
-
-        return reject({statusCode: 503, data: "Not Implemented!"});
-    }))
-};
-
 export const createRequest = async (input: JobRequest) => {
     return new Promise((resolve, reject) => {
         const data = input.data;
         const method = process.env.API_METHOD || data.method || "";
         switch (method.toLowerCase()) {
-            case "collectrequest":
+            case "collectRequest":
                 collectRequestHandle(<CollectRequest>data)
                     .then((response: any) => {
                         response.data.result = response.data.batch_header.payout_batch_id || "";
                         return resolve(response);
                     }).catch(reject);
                 break;
-            case "getpayout":
-                getPayout(<GetRequest>data)
+            case "getStatus":
+                getTxStatusHandle(<GetStatusRequest>data)
                     .then((response: any) => {
                         response.data.result = response.data.batch_header.payout_batch_id || "";
                         return resolve(response);
