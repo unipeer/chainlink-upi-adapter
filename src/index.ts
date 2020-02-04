@@ -16,45 +16,39 @@ export class JobRequest {
 }
 
 export const createRequest = async (input: JobRequest) => {
-    return new Promise((resolve, reject) => {
-        const data = input.data;
-        const method = process.env.API_METHOD || data.method || "";
-        switch (method.toLowerCase()) {
-            case "collectRequest":
-                collectRequestHandle(<CollectRequest>data)
-                    .then((response: any) => {
-                        response.data.result = response.data.batch_header.payout_batch_id || "";
-                        return resolve(response);
-                    }).catch(reject);
-                break;
-            case "getStatus":
-                getTxStatusHandle(<GetStatusRequest>data)
-                    .then((response: any) => {
-                        response.data.result = response.data.batch_header.payout_batch_id || "";
-                        return resolve(response);
-                    }).catch(reject);
-                break;
-            default:
-                return reject({statusCode: 400, data: "Invalid method"})
-        }
-    })
+    const data = input.data;
+    const method = process.env.API_METHOD || data.method || "";
+    switch (method.toLowerCase()) {
+        case "collectrequest":
+            return collectRequestHandle(<CollectRequest>data)
+                .then((response: any) => {
+                    //response.data.result = response.data.batch_header.payout_batch_id || "";
+                    return response;
+                });
+        case "getstatus":
+            return getTxStatusHandle(<GetStatusRequest>data)
+                .then((response: any) => {
+                    //response.data.result = response.data.batch_header.payout_batch_id || "";
+                    return response;
+                });
+        default:
+            throw {statusCode: 400, data: "Invalid method"};
+    }
 };
 
 export const requestWrapper = async (req: JobRequest): Promise<Response> => {
-    return new Promise<Response>(resolve => {
-        let response = <Response>{jobRunID: req.id || ""};
-        createRequest(req).then(({statusCode, data}) => {
-            response.status = data.status || "success";
-            response.pending = data.status === "pending";
-            response.data = data;
-            response.statusCode = statusCode;
-            resolve(response)
-        }).catch(({statusCode, data}) => {
-            response.status = "errored";
-            response.error = data;
-            response.statusCode = statusCode;
-            resolve(response)
-        });
+    let response = <Response>{jobRunID: req.id || ""};
+    return createRequest(req).then(({statusCode, data}) => {
+        response.status = data.status || "success";
+        response.pending = data.status === "pending";
+        response.data = data;
+        response.statusCode = statusCode;
+        return response
+    }).catch(({statusCode, data}) => {
+        response.status = "errored";
+        response.error = data;
+        response.statusCode = statusCode;
+        return response
     });
 };
 

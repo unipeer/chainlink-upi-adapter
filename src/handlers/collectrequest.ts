@@ -5,10 +5,9 @@ import { CollectRequest } from "../types";
 import { HttpClient } from "../httpClient";
 
 export const collectRequestHandle = async (data: CollectRequest) => {
-  return new Promise((resolve, reject) => {
     if (!("amount" in data) || !("sender" in data)
         || !("receiver" in data) || !("deviceId" in data)) {
-      return reject({ statusCode: 400, data: "missing required parameters" });
+      throw { statusCode: 400, data: "missing required parameters" };
     }
 
     let id = uuidv1();
@@ -17,14 +16,12 @@ export const collectRequestHandle = async (data: CollectRequest) => {
       ...data
     };
 
-    console.log(body);
-
     const httpClient = new HttpClient();
     return httpClient
       .collectRequest(body)
+      .then(result => result.json())
       .then((result: any) => {
-        return { statusCode: 200, data: result };
+        return { statusCode: 201, data: result };
       })
       .catch((error: Error) => ({ statusCode: 503, data: error.message }));
-  });
 };

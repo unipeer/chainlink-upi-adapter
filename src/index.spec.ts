@@ -37,8 +37,8 @@ describe('create request', () => {
                 assert.equal(response.statusCode, 201, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isNotEmpty(response.data, "response data");
-                assert.isNotEmpty(response.data.result, "payout id");
-                payoutId = response.data.batch_header.payout_batch_id;
+                //assert.isNotEmpty(response.data.result, "payout id");
+                //payoutId = response.data.batch_header.payout_batch_id;
                 done();
             });
         }).timeout(timeout);
@@ -54,7 +54,7 @@ describe('create request', () => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isNotEmpty(response.data, "response data");
-                assert.isNotEmpty(response.data.result, "payout id");
+                //assert.isNotEmpty(response.data.result, "payout id");
                 done();
             });
         }).timeout(timeout);
@@ -63,13 +63,15 @@ describe('create request', () => {
             process.env.API_METHOD = "getStatus";
             req.data = <Request>{
                 method: "collectRequest",
-                payout_id: process.env.TEST_PAYOUT_ID || payoutId
+                deviceId: deviceId,
+                sender: process.env.TEST_SENDER || "your-buyer@upi",
+                txId: process.env.TEST_TXID || "2ff1fb2a-6c81-4fa1-97f5-892d1934b528",
             };
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isNotEmpty(response.data, "response data");
-                assert.isNotEmpty(response.data.result, "payout id");
+                //assert.isNotEmpty(response.data.result, "payout id");
                 done();
             });
         }).timeout(timeout);
