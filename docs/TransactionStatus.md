@@ -1,5 +1,26 @@
+## Transaction Status
 
+https://developerapi.icicibank.com:8443/api/v0/upi2/TransactionStatus
 
+Curl:
+```
+curl -H "Content-Type: application/json" -H "apikey: l7xx062b5f407bb14a719d0986f85f7ee381" -d '{"MobileNumber": "902890XXXX", "deviceId": "8452165486XXXX", "seqNumber": "ef1e92b4a01d4618a0eca5fdecc37ff23f3", "channelcode": "ImoXXXX", "profileId": "10", "VirtualAddress": "TEST@psp", "payeename": "RohitPatekar"}' https://developerapi.icicibank.com:8443/api/v0/upi2/TransactionStatus
+```
+
+Payload:
+```json
+{
+  "MobileNumber": "902890XXXX",
+  "deviceId": "8452165486XXXX",
+  "seqNumber": "ef1e92b4a01d4618a0eca5fdecc37ff23f3",
+  "channelcode": "ImoXXXX",
+  "profileId": "10",
+  "VirtualAddress": "TEST@psp",
+  "payeename": "RohitPatekar"
+}
+```
+
+Input Schema:
 ```json
 {
   "ApiData": {

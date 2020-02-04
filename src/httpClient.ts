@@ -21,10 +21,9 @@ export class HttpClient {
   }
 
   /**
-   * Fetch a path directly from the origin.
+   * Post request to start a collect-request with bank.
    *
-   * @param path required, the path to fetch, joined by the client url.
-   * @param init initializer for the request, recursively merges with client initializer.
+   * @param body required, the request body as an object.
    */
   public async collectRequest(body: any): Promise<Response> {
     let path =

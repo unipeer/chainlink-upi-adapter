@@ -1,9 +1,14 @@
-## UPI 1
+## Collect Request
 
 https://developerapi.icicibank.com:8443/api/v0/upi1/collectrequest
 
 API-KEY:
 `apikey: l7xx57b7cb6715d447a8ac67ee01b1d87914`
+
+Curl:
+```
+curl -H "Content-Type: application/json" -H "apikey: l7xx062b5f407bb14a719d0986f85f7ee381" -d '{ "Payeeva": "lmn@xyz", "DeviceId": "84521654XXXXXX", "Note": "taxibill", "Payername": "ABC", "seqNumber": "ef1e92b4a01d4618a0eca5fdecc37ff23f3", "AccountProvider": "5", "ProfileId": "10", "Payerva": "abc@xyz", "Channelcode": "IMobileNumber", "Amount": "100.00", "Expireafter": "10"}' https://developerapi.icicibank.com:8443/api/v0/upi1/collectrequest
+```
 
 Payload:
 ```json
