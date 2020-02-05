@@ -13,7 +13,13 @@ export const getTxStatusHandle = async (data: GetStatusRequest) => {
       .getTxStatus(data)
       .then(result => result.json())
       .then((result: any) => {
-        return { statusCode: 200, data: result };
+          return { statusCode: 200, data: {
+              txId: result.seqNumber,
+              BankRRN: result.BankRRN,
+              success: result.success, // Whether the Tx was successful or not.
+              response: result.response, // Details about the success/error
+              message: result.message // Details about the success/error
+          }};
       })
       .catch((error: Error) => ({ statusCode: 503, data: error.message }));
 };

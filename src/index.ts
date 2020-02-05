@@ -22,13 +22,13 @@ export const createRequest = async (input: JobRequest) => {
         case "collectrequest":
             return collectRequestHandle(<CollectRequest>data)
                 .then((response: any) => {
-                    //response.data.result = response.data.batch_header.payout_batch_id || "";
+                    response.data.result = response.data.txId || "";
                     return response;
                 });
         case "getstatus":
             return getTxStatusHandle(<GetStatusRequest>data)
                 .then((response: any) => {
-                    //response.data.result = response.data.batch_header.payout_batch_id || "";
+                    response.data.result = response.data.success || false;
                     return response;
                 });
         default:

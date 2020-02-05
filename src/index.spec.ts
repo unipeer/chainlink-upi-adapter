@@ -23,7 +23,7 @@ describe('create request', () => {
             });
         });
 
-        let payoutId = "";
+        let txId = "";
 
         it('should send Collect Request', (done) => {
             req.data = <CollectRequest>{
@@ -37,8 +37,8 @@ describe('create request', () => {
                 assert.equal(response.statusCode, 201, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isNotEmpty(response.data, "response data");
-                //assert.isNotEmpty(response.data.result, "payout id");
-                //payoutId = response.data.batch_header.payout_batch_id;
+                assert.isNotEmpty(response.data.result, "tx id");
+                txId = response.data.result;
                 done();
             });
         }).timeout(timeout);
@@ -54,7 +54,7 @@ describe('create request', () => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isNotEmpty(response.data, "response data");
-                //assert.isNotEmpty(response.data.result, "payout id");
+                assert.isNotEmpty(response.data.result, "tx success");
                 done();
             });
         }).timeout(timeout);
@@ -71,7 +71,7 @@ describe('create request', () => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isNotEmpty(response.data, "response data");
-                //assert.isNotEmpty(response.data.result, "payout id");
+                assert.isNotEmpty(response.data.result, "tx success");
                 done();
             });
         }).timeout(timeout);
