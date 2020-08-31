@@ -1,6 +1,6 @@
 FROM node:alpine
 
-WORKDIR /paypal-adapter
+WORKDIR /upi-adapter
 ADD . .
 
 RUN apk add --no-cache git

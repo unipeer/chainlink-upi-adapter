@@ -1,0 +1,22 @@
+<upi:ReqListAccount xmlns:upi="http://npci.org/upi/schema/">
+    <Head ver="2.0" ts="2018-09-15T20:19:41.038+05:30" orgId="112233" msgId="NPC000015d08de6764b7485f98cb0cf88c4"/>
+    <Txn id="NPCaba528f981fd4d758811cb57c1317ccj" note="sachin123" refId="NPC7215eda0afca42a1aa410a2d0349f260" refUrl="http://www.icicibank.com" ts="2018-09-15T20:19:41.038+05:30" type="ListAccount"/>
+    <Link type="MOBILE" value="919557167682"/>
+    <Payer addr="shaleen.jain95@oksbi" name="sachin" seqNum="1" type="PERSON" code="0000" aadhaarConsent="N">
+        <Device>
+            <Tag name="MOBILE" value="919557167682"/>
+            <Tag name="GEOCODE" value="34.7273,74.8278"/>
+            <Tag name="LOCATION" value="pune"/>
+            <Tag name="IP" value="192.68.0.12"/>
+            <Tag name="TYPE" value="MOB"/>
+            <Tag name="ID" value="3356"/>
+            <Tag name="OS" value="ios"/>
+            <Tag name="APP" value="10000629091"/>
+            <Tag name="CAPABILITY" value="1234556789"/>
+            <Tag name="TELECOM" value="Airtel"/>
+        </Device>
+        <Ac addrType="ACCOUNT">
+            <Detail name="IFSC" value="IFSC0000122"/>
+        </Ac>
+    </Payer>
+</upi:ReqListAccount>
