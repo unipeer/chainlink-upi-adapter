@@ -1,6 +1,6 @@
 import {JobRequest, requestWrapper} from './index';
 import {Request, CollectRequest, GetStatusRequest} from "./types";
-import {assert} from 'chai';
+import {assert, expect} from 'chai';
 import 'mocha';
 
 describe('create request', () => {
@@ -51,7 +51,7 @@ describe('create request', () => {
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
-                assert.equal(response.status, "success", "status");
+                expect(["success","pending", "errored"], "status").to.include(response.status);
                 assert.isNotEmpty(response.data, "response data");
                 assert.isNotEmpty(response.data.result, "tx success");
                 done();
@@ -67,7 +67,7 @@ describe('create request', () => {
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
-                assert.equal(response.status, "success", "status");
+                expect(["success","pending", "errored"], "status").to.include(response.status);
                 assert.isNotEmpty(response.data, "response data");
                 assert.isNotEmpty(response.data.result, "tx success");
                 done();
