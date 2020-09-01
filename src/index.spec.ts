@@ -113,6 +113,7 @@ describe("UPI 2.0 API Adapter", () => {
       };
       requestWrapper(req)
         .then((response) => {
+          process.env.API_METHOD = "";
           assert.equal(response.statusCode, 200, "status code");
           assert.equal(response.jobRunID, jobID, "job id");
           expect(["success", "pending", "errored"], "status").to.include(
