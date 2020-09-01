@@ -3,17 +3,23 @@ import URL from "url";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
 
-import { CollectBody, GetStatusRequest, CollectResponse, TxStatusResponse } from "./types";
+import {
+  CollectBody,
+  GetStatusRequest,
+  ValidateVPARequest,
+  CollectResponse,
+  TxStatusResponse,
+} from "./types";
 
-class AuthTokenParams {
+class SessionParams {
   session: string;
 }
 
-class GetTxIdParams extends AuthTokenParams {
+class AuthTokenParams extends SessionParams {
   auth: string;
 }
 
-class CollectRequestParams extends GetTxIdParams {
+class TxIdParams extends AuthTokenParams {
   txId: string;
 }
 
@@ -37,7 +43,7 @@ export class HttpClient {
     }
   }
 
-  private async login(): Promise<AuthTokenParams> {
+  private async login(): Promise<SessionParams> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let reqBody = {
@@ -66,7 +72,7 @@ export class HttpClient {
       });
   }
 
-  private async getAuthToken(params: AuthTokenParams): Promise<GetTxIdParams> {
+  private async getAuthToken(params: SessionParams): Promise<AuthTokenParams> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let reqBody = {
@@ -111,7 +117,7 @@ export class HttpClient {
       });
   }
 
-  private async getTxId(params: GetTxIdParams): Promise<CollectRequestParams> {
+  private async getTxId(params: AuthTokenParams): Promise<TxIdParams> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let reqBody = {
@@ -165,7 +171,7 @@ export class HttpClient {
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
-    let getBody = (params: CollectRequestParams) => ({
+    let getBody = (params: TxIdParams) => ({
       header: {
         sessiontoken: params.session,
         bcagent: "Rki2160863",
@@ -226,7 +232,7 @@ export class HttpClient {
    * Request to confirm the status of a payment transaction
    * associated with the `body.txId`.
    *
-   * This API should only be called after a collect request 
+   * This API should only be called after a collect request
    * has expired and no HTTP callback for the txId was received.
    *
    * @param body required, the request body as an object.
@@ -234,7 +240,7 @@ export class HttpClient {
   public async getTxStatus(body: GetStatusRequest): Promise<TxStatusResponse> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
-    let getBody = (params: GetTxIdParams) => ({
+    let getBody = (params: AuthTokenParams) => ({
       header: {
         sessiontoken: params.session,
         bcagent: "Rki2160863",
@@ -274,19 +280,19 @@ export class HttpClient {
         let status: string;
         let result: any = Object.entries(res)[0][1];
 
-        // Adapt the status of the txId 
+        // Adapt the status of the txId
         // according to chainlink response standard
         // TODO: status or txnstatus
         switch (result.txnstatus.toLowerCase()) {
-            case "success":
-                status = "success";
-                break;
-            case "failure":
-                status = "errored";
-                break;
-            case "in progress":
-                status = "pending";
-                break;
+          case "success":
+            status = "success";
+            break;
+          case "failure":
+            status = "errored";
+            break;
+          case "in progress":
+            status = "pending";
+            break;
         }
 
         return {
@@ -297,7 +303,74 @@ export class HttpClient {
           message: result.txnstatus as string,
           sender: result.payeraddr,
           receiver: result.payeeaddr,
-          custRRN: result.custref
+          custRRN: result.custref,
+        };
+      });
+  }
+
+  /**
+   * API to confirm an user entered UPI Id or
+   * VPA (Virtual Payment Address) is valid or not.
+   *
+   * This should not be used through a contract but
+   * is provided though the same oracle to completeness.
+   *
+   * Oracle owner can call this API through external auth
+   * or by via a web/external initiator as part of chainlink framework.
+   *
+   * @param body required, the request body as an object.
+   */
+  public async validateVPA(body: ValidateVPARequest): Promise<any> {
+    let path = "https://proxy.unipeer.exchange/rbl";
+
+    let getBody = (params: AuthTokenParams) => ({
+      header: {
+        sessiontoken: params.session,
+        bcagent: "Rki2160863",
+      },
+      mrchOrgId: "rkicks",
+      aggrOrgId: "rkicks",
+      note: "nothing",
+      refId: body.refId,
+      orgTxnId: body.refId,
+      refUrl: "http://google.com",
+      mobile: "9234567890",
+      geocode: "34.7273,74.8278",
+      location: "India",
+      ip: "192.68.0.12",
+      type: "MOB",
+      id: "sdfa",
+      os: "Android",
+      app: "com.rblbank.mobank",
+      capability: "100",
+      hmac: params.auth,
+      addr: body.vpa,
+    });
+
+    return this.login()
+      .then((res) => this.getAuthToken({ session: res.session }))
+      .then((res) => {
+        let init = this.initMerge({
+          method: "POST",
+          headers: {
+            "Content-Type": "application/xml",
+          },
+          body: js2xml.parse("validatevpa", getBody(res)),
+        });
+
+        return fetch(path, init);
+      })
+      .then((res) => res.text())
+      .then((res) => xmlParser.toJson(res, { object: true }))
+      .then((res) => {
+          console.log(res);
+        let result: any = Object.entries(res)[0][1];
+
+        return {
+          // Here status returned is of VPA not API. :/
+          success: result.status == 1,
+          message: result.description as string,
+          refId: body.refId,
         };
       });
   }

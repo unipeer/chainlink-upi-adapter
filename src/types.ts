@@ -17,6 +17,11 @@ export class GetStatusRequest extends Request {
   txId: string;
 }
 
+export class ValidateVPARequest extends Request {
+  refId: string;    // Our internal unique Id
+  vpa: string;
+}
+
 export class Response {
     success: boolean;  // Whether the API call was successful or not.
     status?: string;
