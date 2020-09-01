@@ -1,44 +1,43 @@
-import uuidv1 from "uuid/v1";
+import { v1 as uuidv1 } from 'uuid';
 import fetch from "node-fetch";
 
-import { CollectRequest } from "../types";
+import { CollectRequest, CollectResponse } from "../types";
 import { HttpClient } from "../httpClient";
 
 export const collectRequestHandle = async (data: CollectRequest) => {
-    if (!("amount" in data) || !("sender" in data)
-        || !("receiver" in data) || !("deviceId" in data)) {
-      throw { statusCode: 400, data: "missing required parameters" };
-    }
+  if (!("amount" in data) || !("sender" in data) || !("receiver" in data)) {
+    throw { statusCode: 400, data: "missing required parameters" };
+  }
 
-    let id = uuidv1();
-    const body = {
-      txId: id,
-      ...data
-    };
+  // Some bank API's need a shorter Id
+  let id = uuidv1().slice(3);
+  const body = {
+    refId: id,
+    ...data,
+  };
 
-    const httpClient = new HttpClient();
-    return httpClient
-      .collectRequest(body)
-      .then(result => result.json())
-      .then((result: any) => {
-          // If this req is successful, we wait for the callback from the
-          // bank else we tell the upstream their req was not successful, passing
-          // the error message from the bank.
-          if (!result.success) {
-            return { statusCode: 501, data: {
-                status: "errored",
-                ...result
-            }};
-          } else {
-            return { statusCode: 201, data: {
-              status: "pending",
-              txId: result.SeqNo,
-              BankRRN: result.BankRRN,
-              success: result.success, // Whether the Tx was successful or not.
-              response: result.response, // Details about the success/error
-              message: result.message, // Details about the success/error
-            }};
-          }
-      })
-      .catch((error: Error) => ({ statusCode: 503, data: error }));
+  const httpClient = new HttpClient();
+  return httpClient
+    .collectRequest(body)
+    .then((result: CollectResponse) => {
+      // If this req is successful, we wait for the callback from the
+      // bank else we tell the upstream their req was not successful, passing
+      // the error message from the bank.
+      if (!result.success) {
+        throw { statusCode: 500, data: result.message };
+      }
+
+      return {
+        statusCode: 201,
+        data: {
+          status: "pending",
+          refId: result.refId,
+          txId: result.txId,
+          message: result.message,
+        },
+      };
+    })
+    .catch((error: Error) => {
+      throw { statusCode: 503, data: error };
+    });
 };

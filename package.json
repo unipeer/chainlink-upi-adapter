@@ -6,7 +6,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "start": "npm run build && node ./dist/server.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node-fetch": "^2.5.4",
     "@types/uuid": "^3.4.6",
+    "@types/xml2json": "^0.11.3",
     "chai": "^4.2.0",
     "mocha": "^6.0.2",
     "ts-node": "^8.0.3",
@@ -32,7 +34,9 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "js2xmlparser": "^4.0.1",
     "node-fetch": "^2.6.0",
-    "uuid": "^3.4.0"
+    "uuid": "^8.3.0",
+    "xml2json": "^0.12.0"
   }
 }

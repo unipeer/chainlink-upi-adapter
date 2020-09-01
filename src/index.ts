@@ -1,7 +1,7 @@
 import {Request, CollectRequest, GetStatusRequest} from "./types";
 import {collectRequestHandle, getTxStatusHandle} from "./handlers";
 
-class Response {
+class JobResponse {
     jobRunID: string;
     statusCode: number;
     status?: string;
@@ -36,8 +36,8 @@ export const createRequest = async (input: JobRequest) => {
     }
 };
 
-export const requestWrapper = async (req: JobRequest): Promise<Response> => {
-    let response = <Response>{jobRunID: req.id || ""};
+export const requestWrapper = async (req: JobRequest): Promise<JobResponse> => {
+    let response = <JobResponse>{jobRunID: req.id || ""};
     return createRequest(req).then(({statusCode, data}) => {
         response.status = data.status || "success";
         response.pending = data.status === "pending";

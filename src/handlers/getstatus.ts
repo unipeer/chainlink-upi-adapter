@@ -21,5 +21,5 @@ export const getTxStatusHandle = async (data: GetStatusRequest) => {
               message: result.message // Details about the success/error
           }};
       })
-      .catch((error: Error) => ({ statusCode: 503, data: error.message }));
+      .catch((error: Error) => { throw ({ statusCode: 503, data: error.message })});
 };
