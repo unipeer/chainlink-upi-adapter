@@ -14,8 +14,6 @@ export class CollectBody extends CollectRequest {
 }
 
 export class GetStatusRequest extends Request {
-  sender: string;
-  deviceId: string;
   txId: string;
 }
 

@@ -5,6 +5,18 @@ import xmlParser from "xml2json";
 
 import { CollectBody, GetStatusRequest, CollectResponse } from "./types";
 
+class AuthTokenParams {
+  session: string;
+}
+
+class GetTxIdParams extends AuthTokenParams {
+  auth: string;
+}
+
+class CollectRequestParams extends GetTxIdParams {
+  txId: string;
+}
+
 export class HttpClient {
   private readonly init: RequestInit;
 
@@ -25,7 +37,7 @@ export class HttpClient {
     }
   }
 
-  private async login(): Promise<{ session: string }> {
+  private async login(): Promise<AuthTokenParams> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let reqBody = {
@@ -54,14 +66,12 @@ export class HttpClient {
       });
   }
 
-  private async getAuthToken(
-    session: string
-  ): Promise<{ session: string; auth: string }> {
+  private async getAuthToken(params: AuthTokenParams): Promise<GetTxIdParams> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let reqBody = {
       header: {
-        sessiontoken: session,
+        sessiontoken: params.session,
         bcagent: "Rki2160863",
       },
       mrchOrgId: "rkicks",
@@ -97,19 +107,16 @@ export class HttpClient {
         if (result.status === "0") {
           throw { statusCode: 500, data: result.description };
         }
-        return { session: session, auth: result.token };
+        return { auth: result.token, ...params };
       });
   }
 
-  private async getTxId(
-    session: string,
-    auth: string
-  ): Promise<{ session: string; auth: string; txId: string }> {
+  private async getTxId(params: GetTxIdParams): Promise<CollectRequestParams> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let reqBody = {
       header: {
-        sessiontoken: session,
+        sessiontoken: params.session,
         bcagent: "Rki2160863",
       },
       mrchOrgId: "rkicks",
@@ -123,7 +130,7 @@ export class HttpClient {
       os: "Android",
       app: "com.rblbank.mobank",
       capability: "100",
-      hmac: auth,
+      hmac: params.auth,
     };
 
     let init = this.initMerge({
@@ -142,7 +149,7 @@ export class HttpClient {
         if (result.status === "0") {
           throw { statusCode: 500, data: result.description };
         }
-        return { session: session, auth: auth, txId: result.txnId };
+        return { txId: result.txnId, ...params };
       });
   }
 
@@ -158,9 +165,9 @@ export class HttpClient {
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
-    let getBody = (res: { session: string; auth: string; txId: string }) => ({
+    let getBody = (params: CollectRequestParams) => ({
       header: {
-        sessiontoken: res.session,
+        sessiontoken: params.session,
         bcagent: "Rki2160863",
       },
       mrchOrgId: "rkicks",
@@ -169,8 +176,8 @@ export class HttpClient {
       validupto: "2020-10-05 00:00:00",
       refId: body.refId,
       refUrl: "http://google.com",
-      orgTxnId: res.txId,
-      txnId: res.txId,
+      orgTxnId: params.txId,
+      txnId: params.txId,
       mobile: "9234567890",
       geocode: "34.7273,74.8278",
       location: "India",
@@ -180,7 +187,7 @@ export class HttpClient {
       os: "Android",
       app: "com.rblbank.mobank",
       capability: "100",
-      hmac: res.auth,
+      hmac: params.auth,
       payeraddress: body.sender,
       payername: body.sender,
       payeeaddress: body.receiver,
@@ -189,8 +196,8 @@ export class HttpClient {
     });
 
     return this.login()
-      .then((res) => this.getAuthToken(res.session))
-      .then((res) => this.getTxId(res.session, res.auth))
+      .then((res) => this.getAuthToken({ session: res.session }))
+      .then((res) => this.getTxId({ session: res.session, auth: res.auth }))
       .then((res) => {
         let init = this.initMerge({
           method: "POST",
@@ -221,26 +228,74 @@ export class HttpClient {
    *
    * @param body required, the request body as an object.
    */
-  public async getTxStatus(body: GetStatusRequest): Promise<Response> {
-    let path =
-      "https://developerapi.icicibank.com:8443/api/v0/upi2/TransactionStatus";
+  public async getTxStatus(body: GetStatusRequest): Promise<any> {
+    let path = "https://proxy.unipeer.exchange/rbl";
 
-    let reqBody = {
-      profileId: "10",
-      MobileNumber: "902890XXXX",
-      VirtualAddress: body.sender,
-      deviceId: body.deviceId,
-      seqNumber: body.txId,
-      channelcode: "ImoXXXX",
-      payeename: "",
-    };
-
-    let init = this.initMerge({
-      method: "POST",
-      body: JSON.stringify(reqBody),
+    let getBody = (params: GetTxIdParams) => ({
+      header: {
+        sessiontoken: params.session,
+        bcagent: "Rki2160863",
+      },
+      mrchOrgId: "rkicks",
+      aggrOrgId: "rkicks",
+      mobile: "9234567890",
+      geocode: "34.7273,74.8278",
+      location: "India",
+      ip: "192.68.0.12",
+      type: "MOB",
+      id: "sdfa",
+      os: "Android",
+      app: "com.rblbank.mobank",
+      capability: "100",
+      hmac: params.auth,
+      orgTxnIdorrefId: body.txId,
+      flag: 0,
     });
 
-    return fetch(path, init);
+    return this.login()
+      .then((res) => this.getAuthToken({ session: res.session }))
+      .then((res) => {
+        let init = this.initMerge({
+          method: "POST",
+          headers: {
+            "Content-Type": "application/xml",
+          },
+          body: js2xml.parse("searchrequest", getBody(res)),
+        });
+
+        return fetch(path, init);
+      })
+      .then((res) => res.text())
+      .then((res) => xmlParser.toJson(res, { object: true }))
+      .then((res) => {
+        let status: string;
+        let result: any = Object.entries(res)[0][1];
+
+        // Adapt the status of the txId 
+        // according to chainlink response standard
+        switch (result.txnstatus.toLowerCase()) {
+            case "success":
+                status = "success";
+                break;
+            case "failure":
+                status = "errored";
+                break;
+            case "in progress":
+                status = "pending";
+                break;
+        }
+
+        return {
+          status,
+          success: result.status == 1,
+          txId: body.txId as string,
+          // Success /Failure/ In Progress
+          message: result.txnstatus as string,
+          sender: result.payeraddr,
+          receiver: result.payeeaddr,
+          custRRN: result.custref
+        };
+      });
   }
 
   /**

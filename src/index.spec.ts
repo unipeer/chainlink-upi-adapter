@@ -10,7 +10,7 @@ describe('create request', () => {
             id: jobID,
             data: <Request>{}
         };
-        const timeout = 9500;
+        const timeout = 15000;
 
         it('should fail on invalid method', (done) => {
             // Notice method not set.
@@ -33,45 +33,45 @@ describe('create request', () => {
                 receiver: process.env.TEST_RECEIVER || "your-seller@upi"
             };
             requestWrapper(req).then((response) => {
-                console.log(response);
                 assert.equal(response.statusCode, 201, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
+                assert.equal(response.status, "pending", "status");
                 assert.isNotEmpty(response.data, "response data");
                 assert.isNotEmpty(response.data.result, "tx id");
                 txId = response.data.result;
                 done();
-            });
+            }).catch((err) => done(err));
         }).timeout(timeout);
 
         it('should get Tx status details', (done) => {
             req.data = <GetStatusRequest>{
                 method: "getStatus",
-                sender: process.env.TEST_SENDER || "your-buyer@upi",
-                txId: process.env.TEST_TXID || "2ff1fb2a-6c81-4fa1-97f5-892d1934b528",
+                txId: process.env.TEST_TXID || "RNB20e05a9a46394245b6b284515040edba",
             };
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
+                assert.equal(response.status, "success", "status");
                 assert.isNotEmpty(response.data, "response data");
                 assert.isNotEmpty(response.data.result, "tx success");
                 done();
-            });
+            }).catch((err) => done(err));
         }).timeout(timeout);
 
         it('should get Tx Status details using ENV variable', (done) => {
             process.env.API_METHOD = "getStatus";
             req.data = <Request>{
                 method: "collectRequest",
-                sender: process.env.TEST_SENDER || "your-buyer@upi",
-                txId: process.env.TEST_TXID || "2ff1fb2a-6c81-4fa1-97f5-892d1934b528",
+                txId: process.env.TEST_TXID || "RNB22a90175ae2e43e7b21fd3ebcdb2dc14",
             };
             requestWrapper(req).then((response) => {
                 assert.equal(response.statusCode, 200, "status code");
                 assert.equal(response.jobRunID, jobID, "job id");
+                assert.equal(response.status, "success", "status");
                 assert.isNotEmpty(response.data, "response data");
                 assert.isNotEmpty(response.data.result, "tx success");
                 done();
-            });
+            }).catch((err) => done(err));
         }).timeout(timeout);
 
         it('should fail collectRequest with missing amount', (done) => {
@@ -85,7 +85,7 @@ describe('create request', () => {
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isUndefined(response.data, "response data");
                 done();
-            });
+            }).catch((err) => done(err));
         }).timeout(timeout);
 
         it('should fail collectRequest with missing receiver', (done) => {
@@ -99,7 +99,7 @@ describe('create request', () => {
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isUndefined(response.data, "response data");
                 done();
-            });
+            }).catch((err) => done(err));
         }).timeout(timeout);
 
         it('should fail getStatus with missing transaction id', (done) => {
@@ -112,7 +112,7 @@ describe('create request', () => {
                 assert.equal(response.jobRunID, jobID, "job id");
                 assert.isUndefined(response.data, "response data");
                 done();
-            });
+            }).catch((err) => done(err));
         }).timeout(timeout);
     })
 });

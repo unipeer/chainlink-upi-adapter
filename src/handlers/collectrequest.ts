@@ -1,4 +1,4 @@
-import { v1 as uuidv1 } from 'uuid';
+import { v1 as uuidv1 } from "uuid";
 import fetch from "node-fetch";
 
 import { CollectRequest, CollectResponse } from "../types";

@@ -4,22 +4,29 @@ import { GetStatusRequest } from "../types";
 import { HttpClient } from "../httpClient";
 
 export const getTxStatusHandle = async (data: GetStatusRequest) => {
-    if (!("sender" in data) || !("deviceId" in data) || !("txId" in data)) {
-      throw { statusCode: 400, data: "missing required parameters" };
-    }
+  if (!("txId" in data)) {
+    throw { statusCode: 400, data: "missing required parameters" };
+  }
 
-    const httpClient = new HttpClient();
-    return httpClient
-      .getTxStatus(data)
-      .then(result => result.json())
-      .then((result: any) => {
-          return { statusCode: 200, data: {
-              txId: result.seqNumber,
-              BankRRN: result.BankRRN,
-              success: result.success, // Whether the Tx was successful or not.
-              response: result.response, // Details about the success/error
-              message: result.message // Details about the success/error
-          }};
-      })
-      .catch((error: Error) => { throw ({ statusCode: 503, data: error.message })});
+  const httpClient = new HttpClient();
+  return httpClient
+    .getTxStatus(data)
+    .then((result: any) => {
+      if (!result.success) {
+        throw { statusCode: 500, data: result.message };
+      }
+
+      return {
+        statusCode: 200,
+        data: {
+          success: result.success, // Whether the Tx was successful or not.
+          txId: result.txId,
+          message: result.message, // Details about the success/error
+          ...result,
+        },
+      };
+    })
+    .catch((error: Error) => {
+      throw { statusCode: 503, data: error.message };
+    });
 };
