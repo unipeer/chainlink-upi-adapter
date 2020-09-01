@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-import { GetStatusRequest } from "../types";
+import { GetStatusRequest, TxStatusResponse } from "../types";
 import { HttpClient } from "../httpClient";
 
 export const getTxStatusHandle = async (data: GetStatusRequest) => {
@@ -11,19 +11,14 @@ export const getTxStatusHandle = async (data: GetStatusRequest) => {
   const httpClient = new HttpClient();
   return httpClient
     .getTxStatus(data)
-    .then((result: any) => {
+    .then((result: TxStatusResponse) => {
       if (!result.success) {
         throw { statusCode: 500, data: result.message };
       }
 
       return {
         statusCode: 200,
-        data: {
-          success: result.success, // Whether the Tx was successful or not.
-          txId: result.txId,
-          message: result.message, // Details about the success/error
-          ...result,
-        },
+        data: result,
       };
     })
     .catch((error: Error) => {

@@ -28,7 +28,7 @@ export const createRequest = async (input: JobRequest) => {
         case "getstatus":
             return getTxStatusHandle(<GetStatusRequest>data)
                 .then((response: any) => {
-                    response.data.result = response.data.status || false;
+                    response.data.result = response.data.status || "errored";
                     return response;
                 });
         default:

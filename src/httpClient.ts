@@ -3,7 +3,7 @@ import URL from "url";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
 
-import { CollectBody, GetStatusRequest, CollectResponse } from "./types";
+import { CollectBody, GetStatusRequest, CollectResponse, TxStatusResponse } from "./types";
 
 class AuthTokenParams {
   session: string;
@@ -226,9 +226,12 @@ export class HttpClient {
    * Request to confirm the status of a payment transaction
    * associated with the `body.txId`.
    *
+   * This API should only be called after a collect request 
+   * has expired and no HTTP callback for the txId was received.
+   *
    * @param body required, the request body as an object.
    */
-  public async getTxStatus(body: GetStatusRequest): Promise<any> {
+  public async getTxStatus(body: GetStatusRequest): Promise<TxStatusResponse> {
     let path = "https://proxy.unipeer.exchange/rbl";
 
     let getBody = (params: GetTxIdParams) => ({
@@ -273,6 +276,7 @@ export class HttpClient {
 
         // Adapt the status of the txId 
         // according to chainlink response standard
+        // TODO: status or txnstatus
         switch (result.txnstatus.toLowerCase()) {
             case "success":
                 status = "success";
