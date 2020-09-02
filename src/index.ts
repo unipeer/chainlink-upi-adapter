@@ -64,8 +64,8 @@ export const requestWrapper = async (req: JobRequest): Promise<JobResponse> => {
     })
     .catch(({ statusCode, data }) => {
       response.status = "errored";
-      response.error = data;
-      response.statusCode = statusCode;
+      response.error = data || "Invalid method";
+      response.statusCode = statusCode || 400;
       return response;
     });
 };

@@ -6,8 +6,14 @@ import {AddressInfo} from "net";
 
 const app: express.Application = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/', function (req: any, res: any) {
+    gcpservice(req, res);
+});
+
+app.post('/callback/{:bank}', function (req: any, res: any) {
+    console.log(req.body);
     gcpservice(req, res);
 });
 
