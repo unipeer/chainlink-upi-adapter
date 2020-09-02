@@ -13,7 +13,7 @@ app.post('/', function (req: any, res: any) {
 
 let listener = app.listen(process.env.EA_PORT || 8080, function () {
     let addressInfo = <AddressInfo>listener.address();
-    console.log("Listening on ", addressInfo.address + ":" + addressInfo.port);
+    console.log("Listening on ", addressInfo.address + addressInfo.port);
 });
 
 process.on('SIGINT', function () {

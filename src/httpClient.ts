@@ -363,7 +363,6 @@ export class HttpClient {
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
-          console.log(res);
         let result: any = Object.entries(res)[0][1];
 
         return {
