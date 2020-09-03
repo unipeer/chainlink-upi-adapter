@@ -1,10 +1,13 @@
 FROM node:alpine
 
 WORKDIR /upi-adapter
-ADD . .
-
 RUN apk add --no-cache git python make gcc g++ libc-dev
+
+COPY package.json .
+COPY package-lock.json .
 RUN npm install
+
+ADD . .
 RUN npm run build
 
 ENV EA_PORT=8080
