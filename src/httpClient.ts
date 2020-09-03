@@ -281,8 +281,6 @@ export class HttpClient {
         let result: any = Object.entries(res)[0][1];
 
         // Adapt the status of the txId
-        // according to chainlink response standard
-        // TODO: status or txnstatus
         switch (result.txnstatus.toLowerCase()) {
           case "success":
             status = "success";
@@ -296,7 +294,7 @@ export class HttpClient {
         }
 
         return {
-          status,
+          txnstatus: status,
           success: result.status == 1,
           txId: body.txId as string,
           // Success /Failure/ In Progress

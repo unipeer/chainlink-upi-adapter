@@ -72,6 +72,7 @@ export const requestWrapper = async (req: JobRequest): Promise<JobResponse> => {
 
 // createRequest() wrapper for GCP
 export const gcpservice = async (req: any = {}, res: any): Promise<any> => {
+    console.log(req.body);
   let response = await requestWrapper(<JobRequest>req.body);
   res.status(response.statusCode).send(response);
 };
