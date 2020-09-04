@@ -1,6 +1,5 @@
 import fetch from "node-fetch";
 import crypto from "crypto";
-import { Request, Response } from "express";
 import xmlParser from "xml2json";
 
 import { HttpClient } from "../httpClient";
@@ -23,13 +22,10 @@ function decrypt(text) {
   return decrypted.toString();
 }
 
-export const callbackHandle = async (req: Request, res: Response) => {
+export const callbackHandle = async (req: any, res: any) => {
   console.log(req.body);
   try {
-    let body = xmlParser.toJson(req.body, { object: true });
-    console.log(body);
-
-    let text = decrypt(body.data);
+    let text = decrypt(req.body.data);
     console.log(text);
 
     let resXml =

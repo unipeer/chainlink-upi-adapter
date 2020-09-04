@@ -37,7 +37,7 @@ export const createRequest = async (input: JobRequest) => {
       );
     case "getstatus":
       return getTxStatusHandle(<GetStatusRequest>data).then((response: any) => {
-        response.data.result = response.data.status || "errored";
+        response.data.result = response.data.txnstatus || "errored";
         return response;
       });
     case "validatevpa":

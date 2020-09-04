@@ -1,13 +1,14 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 
 import {gcpservice} from "./index";
 import {AddressInfo} from "net";
 import {callbackHandle} from "./handlers";
+import xmlparser from "express-xml-bodyparser";
 
 const app: express.Application = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(xmlparser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.post('/', function (req: any, res: any) {
     gcpservice(req, res);
