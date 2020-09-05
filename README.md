@@ -3,8 +3,8 @@
 ## TODO
 * Http callbacks
 * config for env vars
-
 * Update to have collect request expire 10 minutes after
+
 * Have a scheduling mechanism for getting tx status if no callback
 * Create an abstraction for using different Banks API's
 
@@ -68,7 +68,7 @@ To test the getPayout method with another payout other than the one created in t
 
 ## Available methods
 
-Method can be specified by the `method` key in the request body or the `API_METHOD` environment variable. If the 
+Method can be specified by the `method` key in the request body or the `API_METHOD` environment variable. If the
 environment variable is set, it takes precedence over the method specified in the request body.
 
 ### sendPayout
@@ -93,10 +93,10 @@ Please refer to the PayPal docs for more information on each parameter: https://
 #### Response
 
 ```json
-{  
+{
   "result":"5UXD2E8A7EBQJ",
-   "batch_header":{  
-      "sender_batch_header":{  
+   "batch_header":{
+      "sender_batch_header":{
          "sender_batch_id":"Payouts_2018_100008",
          "email_subject":"You have a payout!",
          "email_message":"You have received a payout! Thanks for using our service!"
@@ -123,10 +123,10 @@ Please refer to the PayPal docs for more information on each parameter: https://
 #### Response
 
 ```json
-{  
+{
    "result":"5UXD2E8A7EBQJ",
-   "batch_header":{  
-      "sender_batch_header":{  
+   "batch_header":{
+      "sender_batch_header":{
          "sender_batch_id":"Payouts_2018_100008",
          "email_subject":"You have a payout!",
          "email_message":"You have received a payout! Thanks for using our service!"
