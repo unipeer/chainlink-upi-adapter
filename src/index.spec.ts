@@ -146,7 +146,7 @@ describe("UPI 2.0 API Adapter", () => {
     it("should be able to validate a UPI VPA correctly", (done) => {
       req.data = <ValidateVPARequest>{
         method: "validatevpa",
-        vpa: process.env.TEST_VPA || "rkicksbcagent@rbl",
+        vpa: process.env.TEST_VPA || "riya49@rbl",
       };
       requestWrapper(req)
         .then((response) => {
