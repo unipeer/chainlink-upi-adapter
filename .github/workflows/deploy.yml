@@ -14,7 +14,7 @@ jobs:
     - name: Build & push Docker image
       uses: docker/build-push-action@v1
       with:
-        repository: unipeer/chainlink-upi-adapter
+        repository: unipeer/chainlink-upi-adapter/upi-adapter
         registry: docker.pkg.github.com
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
