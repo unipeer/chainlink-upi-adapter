@@ -9,7 +9,7 @@ import { assert, expect } from "chai";
 import "mocha";
 
 describe("UPI 2.0 API Adapter", () => {
-  const timeout = 15000;
+  const timeout = 25000;
   const jobID = "278c97ffadb54a5bbb93cfec5f7b5503";
   const req = <JobRequest>{
     id: jobID,

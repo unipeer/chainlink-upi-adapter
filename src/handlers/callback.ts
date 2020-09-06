@@ -3,10 +3,11 @@ import crypto from "crypto";
 import xmlParser from "xml2json";
 
 import { HttpClient } from "../httpClient";
+import config from "../config";
 
 const algorithm = "aes-256-cbc";
-const key = "a11495d6168621eb8bd17b52b368bc2a";
 const iv = Buffer.alloc(16);
+const key = config.AUTH.rbl.callback_key;
 
 function encrypt(text) {
   let cipher = crypto.createCipheriv(algorithm, key, iv);

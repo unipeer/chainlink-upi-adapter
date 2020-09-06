@@ -3,6 +3,8 @@ import URL from "url";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
 
+import config from "./config";
+
 import {
   CollectBody,
   GetStatusRequest,
@@ -25,6 +27,7 @@ class TxIdParams extends AuthTokenParams {
 
 export class HttpClient {
   private readonly init: RequestInit;
+  private readonly path = config.AUTH.rbl.url;
 
   /**
    * Creates a new HttpClient.
@@ -37,15 +40,12 @@ export class HttpClient {
     this.init = init || {};
     if (!this.init.headers) {
       this.init.headers = {
-        Authorization:
-          "Basic YWRtaW46ZWloZWVoNFJpZTdZZW5hUDlhZWNoNkl0aGlleTFlZW0=",
+        Authorization: config.AUTH.rbl.auth,
       };
     }
   }
 
   private async login(): Promise<SessionParams> {
-    let path = "https://proxy.unipeer.exchange/rbl";
-
     let reqBody = {
       username: "RkicksUser",
       password: "8D44DAAE2F0C6F2F1952EC1C1DA1B967F5F94889",
@@ -60,7 +60,7 @@ export class HttpClient {
       body: js2xml.parse("channelpartnerloginreq", reqBody),
     });
 
-    return fetch(path, init)
+    return fetch(this.path, init)
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
@@ -73,8 +73,6 @@ export class HttpClient {
   }
 
   private async getAuthToken(params: SessionParams): Promise<AuthTokenParams> {
-    let path = "https://proxy.unipeer.exchange/rbl";
-
     let reqBody = {
       header: {
         sessiontoken: params.session,
@@ -105,7 +103,7 @@ export class HttpClient {
       body: js2xml.parse("generateauthtokenreq", reqBody),
     });
 
-    return fetch(path, init)
+    return fetch(this.path, init)
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
@@ -118,8 +116,6 @@ export class HttpClient {
   }
 
   private async getTxId(params: AuthTokenParams): Promise<TxIdParams> {
-    let path = "https://proxy.unipeer.exchange/rbl";
-
     let reqBody = {
       header: {
         sessiontoken: params.session,
@@ -147,7 +143,7 @@ export class HttpClient {
       body: js2xml.parse("gettxnid", reqBody),
     });
 
-    return fetch(path, init)
+    return fetch(this.path, init)
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
@@ -169,8 +165,6 @@ export class HttpClient {
    * @param body required, the request body as an object.
    */
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
-    let path = "https://proxy.unipeer.exchange/rbl";
-
     let getBody = (params: TxIdParams) => ({
       header: {
         sessiontoken: params.session,
@@ -213,7 +207,7 @@ export class HttpClient {
           body: js2xml.parse("collectrequest", getBody(res)),
         });
 
-        return fetch(path, init);
+        return fetch(this.path, init);
       })
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
@@ -238,8 +232,6 @@ export class HttpClient {
    * @param body required, the request body as an object.
    */
   public async getTxStatus(body: GetStatusRequest): Promise<TxStatusResponse> {
-    let path = "https://proxy.unipeer.exchange/rbl";
-
     let getBody = (params: AuthTokenParams) => ({
       header: {
         sessiontoken: params.session,
@@ -272,7 +264,7 @@ export class HttpClient {
           body: js2xml.parse("searchrequest", getBody(res)),
         });
 
-        return fetch(path, init);
+        return fetch(this.path, init);
       })
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
@@ -319,8 +311,6 @@ export class HttpClient {
    * @param body required, the request body as an object.
    */
   public async validateVPA(body: ValidateVPARequest): Promise<any> {
-    let path = "https://proxy.unipeer.exchange/rbl";
-
     let getBody = (params: AuthTokenParams) => ({
       header: {
         sessiontoken: params.session,
@@ -356,7 +346,7 @@ export class HttpClient {
           body: js2xml.parse("validatevpa", getBody(res)),
         });
 
-        return fetch(path, init);
+        return fetch(this.path, init);
       })
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
