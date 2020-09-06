@@ -1,3 +1,7 @@
+import chai, { assert, expect } from "chai";
+import chaiHttp from "chai-http";
+import "mocha";
+
 import { JobRequest, requestWrapper } from "./index";
 import {
   Request,
@@ -5,10 +9,11 @@ import {
   GetStatusRequest,
   ValidateVPARequest,
 } from "./types";
-import { assert, expect } from "chai";
-import "mocha";
+import app from "./app";
 
 describe("UPI 2.0 API Adapter", () => {
+  chai.use(chaiHttp);
+
   const timeout = 25000;
   const jobID = "278c97ffadb54a5bbb93cfec5f7b5503";
   const req = <JobRequest>{
@@ -179,4 +184,20 @@ describe("UPI 2.0 API Adapter", () => {
         .catch((err) => done(err));
     }).timeout(timeout);
   });
+
+  context("Callback", () => {
+    it("should be able to correctly verify a callback", (done) => {
+      let body = "<data>tguAVbKouaWkAIqh6p4EIMVsj6VJ7LHwRT+O+BboiOdKKSPQhRiJdWp/jI7YKG4t5GdLFuPVvDIfIziCjw3EorgsRUpUE+Yc3yVQgXNZLSaWUVU4DJa7qjHQNmw+3z0fY6+f7j2DKBUvitXXTf+jbhyd1ziam93dAzEBAEfLpFac09tkRLV6o8aLOboY9YMAOFi+MLciY8MxC2FFl3BSwEz0IASwZE6HvASHQOr482ql+B7/e/RKaSnNJL+tA+igZv8WFf8UVWJxcC3T/pz0ZshtBz+Wi9Xam+msCKmf+qNLZzj4PpMgOeklyf5aF3olTu+yFv1QiKUO5AtgGb6jVdAOWJyG4ZluDpx7JyVdhdeiqoCrmtGdtyTD+KkFtMxLqP4jdvOticZmxnlQxfNYbaGneuK8LUxKd0Wjr+o0N/6KeTrJRBu2k1uWgyI4xqvOzRzOYZrz5lvfIyxX/ibKfBHzdaEeYYkde9oEbxHmPgpYUDlkxI9e+vlodstGJWgSasq3e6cHhrpxtqR+NBwlEuN7PoV0bQYXdXSIxcySIp0cC6nl5HgrZMQTe3GjCAsvFKQhO25vJZpRyK6jALB+qhmo8WtGVwTY//bENL9BHVFhr1qp3iFB6fjRJRgVtdxFRf/88Qp9WFT5n8vK5XHXGqWmPdVIEwWlxYKuJP9lvnkOmeXTjM4Wy6MhiN65JQXdMw+F0HnEKPjVQM/UXcz9j7lo52RoSGj6R8Pv5uqYJXXjNL+mQN7cwg71mtH+0RxD/+vpfaGXxNzpts7q5blrq+VX8mYN+/8HO6Ays3tLl+8P+rDAe1axaRUymvkpYIvtKOdIorNWYbfD/GaZQOeseN3g85BjSxVlI8B+8VcpocjI+qVzJwX2x3ObIYYCzBFGzKxdXok7ppP+4/H3b0EDnYD0JMVawwVOzK9AKnOc/FuED/bKdN4U3wb7YHDww7d1h7Hmuug2ZL6skez8gKuH+Pm9THpOt8BCzo7JozOTXJCOP0IhI0n40oHinoJT09CJWZiaTpEJAflDy9uri2uIdQq+0w1DIs0WyubByiccETOjlCcB0PtCRhFIAAsnESEO7p37D98awcKgl38B8BA2ns62PcWk5v2eVNO5AAWGbUboxkKGLsIkpZ3hkhrsavTtQQeaUdRit/o3YFCbd2YXwZAe7NGFqy5TvtvnxzLDjo/OgLog6EpY6bebRzASvBd6WkZ5ETrkqg/pk2sD8GIbQg==</data>";
+
+        chai.request(app).post("/callback/rbl")
+        .type("application/xml")
+        .send(body)
+        .end(function (err, res) {
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          done(err);
+        })
+    }).timeout(timeout);
+  });
+
 });

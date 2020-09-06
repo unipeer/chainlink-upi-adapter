@@ -40,6 +40,8 @@ export const callbackHandle = async (req: any, res: any) => {
 
     res.type("applicate/xml").status(200).send(resXml);
   } catch (e) {
+    console.log(e);
+
     let resXml =
       "<UPI_PUSH_Response>" +
       "<statuscode>1</statuscode>" +
