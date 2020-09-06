@@ -14,9 +14,9 @@ jobs:
     - name: Build & push Docker image
       uses: docker/build-push-action@v1
       with:
-        repository: unipeer/chainlink-upi-adapter/upi-adapter
-        registry: docker.pkg.github.com
+        repository: unipeer/upi-adapter
+        registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.CR_PAT }}
         tag_with_ref: true
         push: ${{ startsWith(github.ref, 'refs/tags/') }}
