@@ -173,7 +173,7 @@ export class HttpClient {
       mrchOrgId: "rkicks",
       aggrOrgId: "rkicks",
       note: body.note,
-      validupto: "2020-10-05 00:00:00",
+      validupto: "2020-10-08 00:00:00",
       refId: body.refId,
       refUrl: "http://google.com",
       orgTxnId: params.txId,

@@ -29,8 +29,8 @@ export const callbackHandle = async (req: any, res: any) => {
     let text = decrypt(req.body.data);
     console.log(text);
     let body = xmlParser.toJson(text, { object: true })
-    console.log(body);
     let result: any = Object.entries(res)[0][1];
+    console.log(result);
 
     let resXml =
       "<UPI_PUSH_Response>" +
@@ -38,13 +38,13 @@ export const callbackHandle = async (req: any, res: any) => {
       "<description>ACK Success</description>" +
       "</UPI_PUSH_Response>";
 
-    res.type("applicate/xml").status(200).send(resXml);
+    res.type("application/xml").status(200).send(resXml);
   } catch (e) {
     let resXml =
       "<UPI_PUSH_Response>" +
       "<statuscode>1</statuscode>" +
       "<description>Bad Request</description>" +
       "</UPI_PUSH_Response>";
-    res.type("applicate/xml").status(400).send(resXml);
+    res.type("application/xml").status(400).send(resXml);
   }
 };
