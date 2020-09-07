@@ -289,7 +289,7 @@ export class HttpClient {
         return {
           success: result.status == 1,
           txId: body.txId as string,
-          txstatus: txstatus,
+          txStatus: txstatus,
           // Success /Failure/ In Progress
           message: result.txnstatus as string,
           sender: result.payeraddr,
