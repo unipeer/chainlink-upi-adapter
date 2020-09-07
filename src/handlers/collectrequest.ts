@@ -2,9 +2,13 @@ import { v1 as uuidv1 } from "uuid";
 import fetch from "node-fetch";
 
 import { CollectRequest, CollectResponse } from "../types";
-import { HttpClient } from "../httpClient";
+import { HTTPClient } from "../httpClients";
 
-export const collectRequestHandle = async (data: CollectRequest, jobId: string) => {
+export const collectRequestHandle = async (
+  httpClient: HTTPClient,
+  jobId: string,
+  data: CollectRequest
+) => {
   if (!("amount" in data) || !("sender" in data) || !("receiver" in data)) {
     throw { statusCode: 400, data: "missing required parameters" };
   }
@@ -16,7 +20,6 @@ export const collectRequestHandle = async (data: CollectRequest, jobId: string) 
     ...data,
   };
 
-  const httpClient = new HttpClient();
   return httpClient
     .collectRequest(body)
     .then((result: CollectResponse) => {
@@ -31,7 +34,7 @@ export const collectRequestHandle = async (data: CollectRequest, jobId: string) 
         statusCode: 201,
         data: {
           status: "pending",
-          ...result
+          ...result,
         },
       };
     })

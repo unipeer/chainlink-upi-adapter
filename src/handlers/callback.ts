@@ -1,13 +1,14 @@
 import fetch from "node-fetch";
 
 import config from "../config";
-import { HttpClient } from "../httpClient";
+import { HTTPCallbackClass } from "../httpClients";
 
 export const callbackHandle = async (req: any, res: any) => {
-  const httpClient = new HttpClient();
-  return httpClient
+  const httpCallback = new HTTPCallbackClass();
+  return httpCallback
     .processCallback(req.body)
     .then((result) => {
+      console.log(result);
 
       fetch(config.NODE_URL + `/v2/runs/${result.id}`, {
         method: "PATCH",

@@ -2,9 +2,12 @@ import { v1 as uuidv1 } from "uuid";
 import fetch from "node-fetch";
 
 import { ValidateVPARequest } from "../types";
-import { HttpClient } from "../httpClient";
+import { HTTPClient } from "../httpClients";
 
-export const validateVPAHandle = async (data: ValidateVPARequest) => {
+export const validateVPAHandle = async (
+  httpClient: HTTPClient,
+  data: ValidateVPARequest
+) => {
   if (!("vpa" in data)) {
     throw { statusCode: 400, data: "missing required parameters" };
   }
@@ -16,7 +19,6 @@ export const validateVPAHandle = async (data: ValidateVPARequest) => {
     ...data,
   };
 
-  const httpClient = new HttpClient();
   return httpClient
     .validateVPA(body)
     .then((result: any) => {
