@@ -29,7 +29,7 @@ export const createRequest = async (input: JobRequest) => {
   const method = process.env.API_METHOD || data.method || "";
   switch (method.toLowerCase()) {
     case "collectrequest":
-      return collectRequestHandle(<CollectRequest>data).then(
+      return collectRequestHandle(<CollectRequest>data, input.id).then(
         (response: any) => {
           response.data.result = response.data.txId || "";
           return response;

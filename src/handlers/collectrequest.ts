@@ -4,15 +4,15 @@ import fetch from "node-fetch";
 import { CollectRequest, CollectResponse } from "../types";
 import { HttpClient } from "../httpClient";
 
-export const collectRequestHandle = async (data: CollectRequest) => {
+export const collectRequestHandle = async (data: CollectRequest, jobId: string) => {
   if (!("amount" in data) || !("sender" in data) || !("receiver" in data)) {
     throw { statusCode: 400, data: "missing required parameters" };
   }
 
-  // Some bank API's need a shorter Id
-  let id = uuidv1().slice(3);
+  // Use the Chainlink Job Id as ref
+  // so that we know the Job to update during the HTTP callback.
   const body = {
-    refId: id,
+    refId: jobId,
     ...data,
   };
 
