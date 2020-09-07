@@ -1,4 +1,5 @@
 import chai, { assert, expect } from "chai";
+import { v1 as uuidv1 } from "uuid";
 import chaiHttp from "chai-http";
 import "mocha";
 
@@ -15,7 +16,7 @@ describe("UPI 2.0 API Adapter", () => {
   chai.use(chaiHttp);
 
   const timeout = 25000;
-  const jobID = "278c97ffadb54a5bbb93cfec5f7b5503";
+  const jobID = uuidv1().slice(3);
   const req = <JobRequest>{
     id: jobID,
     data: <Request>{},
