@@ -8,7 +8,8 @@ export const callbackHandle = async (req: any, res: any) => {
   return httpClient
     .processCallback(req.body)
     .then((result) => {
-      return fetch(config.NODE_URL + `/v2/runs/${result.id}`, {
+
+      fetch(config.NODE_URL + `/v2/runs/${result.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

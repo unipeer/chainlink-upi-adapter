@@ -364,12 +364,15 @@ export class HttpClient {
   }
 
   public async processCallback(body: any): Promise<any> {
-    return this.HttpCallback.processCallback(body)
-      .catch((e) => { throw {
-          type: "application/xml",
-          statusCode: 400,
-          data: this.HttpCallback.failRes,
-      } });
+    try {
+      return this.HttpCallback.processCallback(body);
+    } catch (e) {
+      throw {
+        type: "application/xml",
+        statusCode: 400,
+        body: this.HttpCallback.failRes,
+      };
+    }
   }
 
   private HttpCallback = new (class {
@@ -378,12 +381,12 @@ export class HttpClient {
     private readonly key = config.BANK.rbl.callback_key;
 
     private readonly successRes =
-      "<UPI_PUSH_Response>" +
+      '<UPI_PUSH_Response xmlns="http://rssoftware.com/callbackadapter/domain/">' +
       "<statuscode>0</statuscode>" +
       "<description>ACK Success</description>" +
       "</UPI_PUSH_Response>";
-    readonly failRes =
-      "<UPI_PUSH_Response>" +
+    public readonly failRes =
+      '<UPI_PUSH_Response xmlns="http://rssoftware.com/callbackadapter/domain/">' +
       "<statuscode>1</statuscode>" +
       "<description>Bad Request</description>" +
       "</UPI_PUSH_Response>";
@@ -402,7 +405,7 @@ export class HttpClient {
       return decrypted.toString();
     }
 
-    public processCallback(req: any): any {
+    public processCallback(req: any): Object {
       let text = this.decrypt(req.data);
       let data = xmlParser.toJson(text, { object: true });
       let result: any = Object.entries(data)[0][1];
