@@ -46,9 +46,9 @@ export class HTTPClient {
 
   private async login(): Promise<SessionParams> {
     let reqBody = {
-      username: "RkicksUser",
-      password: "8D44DAAE2F0C6F2F1952EC1C1DA1B967F5F94889",
-      bcagent: "Rki2160863",
+      username: config.BANK.rbl.username,
+      password: config.BANK.rbl.password,
+      bcagent: config.BANK.rbl.bcagent,
     };
 
     let init = this.initMerge({
@@ -75,10 +75,10 @@ export class HTTPClient {
     let reqBody = {
       header: {
         sessiontoken: params.session,
-        bcagent: "Rki2160863",
+        bcagent: config.BANK.rbl.bcagent,
       },
-      mrchOrgId: "rkicks",
-      aggrOrgId: "rkicks",
+      mrchOrgId: config.BANK.rbl.mrchOrgId,
+      aggrOrgId: config.BANK.rbl.aggrOrgId,
       note: "nothing",
       refId: "124223411245699",
       refUrl: "http://google.com",
@@ -118,10 +118,10 @@ export class HTTPClient {
     let reqBody = {
       header: {
         sessiontoken: params.session,
-        bcagent: "Rki2160863",
+        bcagent: config.BANK.rbl.bcagent,
       },
-      mrchOrgId: "rkicks",
-      aggrOrgId: "rkicks",
+      mrchOrgId: config.BANK.rbl.mrchOrgId,
+      aggrOrgId: config.BANK.rbl.aggrOrgId,
       mobile: "1234567890",
       geocode: "1.23",
       location: "India",
@@ -167,10 +167,10 @@ export class HTTPClient {
     let getBody = (params: TxIdParams) => ({
       header: {
         sessiontoken: params.session,
-        bcagent: "Rki2160863",
+        bcagent: config.BANK.rbl.bcagent,
       },
-      mrchOrgId: "rkicks",
-      aggrOrgId: "rkicks",
+      mrchOrgId: config.BANK.rbl.mrchOrgId,
+      aggrOrgId: config.BANK.rbl.aggrOrgId,
       note: body.note,
       validupto: "2020-10-08 00:00:00",
       refId: body.refId,
@@ -234,10 +234,10 @@ export class HTTPClient {
     let getBody = (params: AuthTokenParams) => ({
       header: {
         sessiontoken: params.session,
-        bcagent: "Rki2160863",
+        bcagent: config.BANK.rbl.bcagent,
       },
-      mrchOrgId: "rkicks",
-      aggrOrgId: "rkicks",
+      mrchOrgId: config.BANK.rbl.mrchOrgId,
+      aggrOrgId: config.BANK.rbl.aggrOrgId,
       mobile: "9234567890",
       geocode: "34.7273,74.8278",
       location: "India",
@@ -313,10 +313,10 @@ export class HTTPClient {
     let getBody = (params: AuthTokenParams) => ({
       header: {
         sessiontoken: params.session,
-        bcagent: "Rki2160863",
+        bcagent: config.BANK.rbl.bcagent,
       },
-      mrchOrgId: "rkicks",
-      aggrOrgId: "rkicks",
+      mrchOrgId: config.BANK.rbl.mrchOrgId,
+      aggrOrgId: config.BANK.rbl.aggrOrgId,
       note: "nothing",
       refId: body.refId,
       orgTxnId: body.refId,

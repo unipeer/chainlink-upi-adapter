@@ -18,7 +18,7 @@ export const callbackHandle = async (req: any, res: any) => {
         },
         body: JSON.stringify({
           id: result.id,
-          data: { result: result.txstatus },
+          data: { result: result.txstatus }, // Payment made successfully or not
           pending: false
         }),
       })

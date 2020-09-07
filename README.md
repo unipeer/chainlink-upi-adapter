@@ -1,8 +1,6 @@
 # PayPal External Adapter
 
 ## TODO
-* Http callbacks
-* config for env vars
 * Update to have collect request expire 10 minutes after
 
 * Have a scheduling mechanism for getting tx status if no callback
