@@ -2,6 +2,7 @@ import fetch, { Headers, RequestInit, Response } from "node-fetch";
 import URL from "url";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
+import crypto from "crypto";
 
 import config from "./config";
 
@@ -27,7 +28,7 @@ class TxIdParams extends AuthTokenParams {
 
 export class HttpClient {
   private readonly init: RequestInit;
-  private readonly path = config.AUTH.rbl.url;
+  private readonly path = config.BANK.rbl.url;
 
   /**
    * Creates a new HttpClient.
@@ -40,7 +41,7 @@ export class HttpClient {
     this.init = init || {};
     if (!this.init.headers) {
       this.init.headers = {
-        Authorization: config.AUTH.rbl.auth,
+        Authorization: config.BANK.rbl.auth,
       };
     }
   }
@@ -269,26 +270,26 @@ export class HttpClient {
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
-        let status: string;
+        let txstatus: string;
         let result: any = Object.entries(res)[0][1];
 
-        // Adapt the status of the txId
+        // Adapt the txstatus of the txId
         switch (result.txnstatus.toLowerCase()) {
           case "success":
-            status = "success";
+            txstatus = "success";
             break;
           case "failure":
-            status = "errored";
+            txstatus = "errored";
             break;
           case "in progress":
-            status = "pending";
+            txstatus = "pending";
             break;
         }
 
         return {
-          txnstatus: status,
           success: result.status == 1,
           txId: body.txId as string,
+          txstatus: txstatus,
           // Success /Failure/ In Progress
           message: result.txnstatus as string,
           sender: result.payeraddr,
@@ -361,6 +362,73 @@ export class HttpClient {
         };
       });
   }
+
+  public async processCallback(body: any): Promise<any> {
+    return this.HttpCallback.processCallback(body)
+      .catch((e) => { throw {
+          type: "application/xml",
+          statusCode: 400,
+          data: this.HttpCallback.failRes,
+      } });
+  }
+
+  private HttpCallback = new (class {
+    private readonly algorithm = "aes-256-cbc";
+    private readonly iv = Buffer.alloc(16);
+    private readonly key = config.BANK.rbl.callback_key;
+
+    private readonly successRes =
+      "<UPI_PUSH_Response>" +
+      "<statuscode>0</statuscode>" +
+      "<description>ACK Success</description>" +
+      "</UPI_PUSH_Response>";
+    readonly failRes =
+      "<UPI_PUSH_Response>" +
+      "<statuscode>1</statuscode>" +
+      "<description>Bad Request</description>" +
+      "</UPI_PUSH_Response>";
+
+    private encrypt(text) {
+      let cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
+      let encrypted = cipher.update(text, "utf8", "base64");
+      encrypted += cipher.final("base64");
+      return encrypted;
+    }
+
+    private decrypt(text) {
+      let decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
+      let decrypted = decipher.update(text, "base64", "utf8");
+      decrypted += decipher.final("utf8");
+      return decrypted.toString();
+    }
+
+    public processCallback(req: any): any {
+      let text = this.decrypt(req.data);
+      let data = xmlParser.toJson(text, { object: true });
+      let result: any = Object.entries(data)[0][1];
+
+      let txstatus;
+      switch (result.transaction_status.toLowerCase()) {
+        case "success":
+          txstatus = true;
+          break;
+        case "failure":
+          txstatus = false;
+          break;
+        case "expired":
+          txstatus = false;
+          break;
+      }
+
+      return {
+        id: result.RefId,
+        txstatus: txstatus,
+        type: "application/xml",
+        statusCode: 200,
+        body: this.successRes,
+      };
+    }
+  })();
 
   /**
    * Creates a new RequestInit for requests.

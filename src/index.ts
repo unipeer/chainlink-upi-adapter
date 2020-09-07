@@ -3,6 +3,9 @@ import {
   CollectRequest,
   GetStatusRequest,
   ValidateVPARequest,
+  CollectResponse,
+  TxStatusResponse,
+  HandlerResponse,
 } from "./types";
 import {
   collectRequestHandle,
@@ -30,16 +33,18 @@ export const createRequest = async (input: JobRequest) => {
   switch (method.toLowerCase()) {
     case "collectrequest":
       return collectRequestHandle(<CollectRequest>data, input.id).then(
-        (response: any) => {
+        (response: HandlerResponse<CollectResponse>) => {
           response.data.result = response.data.txId || "";
           return response;
         }
       );
     case "getstatus":
-      return getTxStatusHandle(<GetStatusRequest>data).then((response: any) => {
-        response.data.result = response.data.txnstatus || "errored";
-        return response;
-      });
+      return getTxStatusHandle(<GetStatusRequest>data).then(
+        (response: HandlerResponse<TxStatusResponse>) => {
+          response.data.result = response.data.txstatus || "errored";
+          return response;
+        }
+      );
     case "validatevpa":
       return validateVPAHandle(<ValidateVPARequest>data).then(
         (response: any) => {

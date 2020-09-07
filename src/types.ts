@@ -34,9 +34,19 @@ export class CollectResponse extends Response {
 }
 
 export class TxStatusResponse extends Response {
-    txId: string;    // Success /Failure/ In Progress
-    message: string; // Details about the success/error
+    txId: string;     // Success /Failure/ In Progress
+    txstatus: string;
+    message: string;  // Details about the success/error
     sender: string;
     receiver: string;
     custRRN: string;
+}
+
+export class JobDataResponse {
+    result?: any;     // the field that should be the result passed to contract
+}
+
+export class HandlerResponse<T> {
+  statusCode: number;
+  data: T & JobDataResponse;
 }

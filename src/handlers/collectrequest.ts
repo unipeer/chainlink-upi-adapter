@@ -31,9 +31,7 @@ export const collectRequestHandle = async (data: CollectRequest, jobId: string) 
         statusCode: 201,
         data: {
           status: "pending",
-          refId: result.refId,
-          txId: result.txId,
-          message: result.message,
+          ...result
         },
       };
     })
