@@ -274,10 +274,10 @@ export class HTTPClient {
         // Adapt the txstatus of the txId
         switch (result.txnstatus.toLowerCase()) {
           case "success":
-            txstatus = "success";
+            txstatus = "successful";
             break;
           case "failure":
-            txstatus = "errored";
+            txstatus = "failed";
             break;
           case "in progress":
             txstatus = "pending";
@@ -288,8 +288,8 @@ export class HTTPClient {
           success: result.status == 1,
           txId: body.txId as string,
           txStatus: txstatus,
-          // Success /Failure/ In Progress
-          message: result.txnstatus as string,
+          // Details about the Success/Failure
+          message: Object.keys(result.txnerrorcode).length !== 0 ? result.txnerrorcode : result.txnstatus,
           sender: result.payeraddr,
           receiver: result.payeeaddr,
           custRRN: result.custref,
