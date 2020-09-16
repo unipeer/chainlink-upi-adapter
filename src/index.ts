@@ -45,7 +45,7 @@ export const createRequest = async (input: JobRequest) => {
     case "getstatus":
       return getTxStatusHandle(client, <GetStatusRequest>data).then(
         (response: HandlerResponse<TxStatusResponse>) => {
-          response.data.result = response.data.txStatus || "errored";
+          response.data.result = response.data.txSuccess || false;
           return response;
         }
       );

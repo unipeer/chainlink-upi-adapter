@@ -12,6 +12,7 @@ export class CollectResponse extends Response {
 export class TxStatusResponse extends Response {
     txId: string;     // Success /Failure/ In Progress
     txStatus: string;
+    txSuccess: boolean;
     message: string;  // Details about the success/error
     sender: string;
     receiver: string;

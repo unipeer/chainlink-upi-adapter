@@ -288,6 +288,7 @@ export class HTTPClient {
           success: result.status == 1,
           txId: body.txId as string,
           txStatus: txstatus,
+          txSuccess: txstatus === "successful" ? true : false,
           // Details about the Success/Failure
           message: Object.keys(result.txnerrorcode).length !== 0 ? result.txnerrorcode : result.txnstatus,
           sender: result.payeraddr,
