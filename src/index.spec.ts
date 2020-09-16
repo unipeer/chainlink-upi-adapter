@@ -105,7 +105,7 @@ describe("UPI 2.0 API Adapter", () => {
             response.status
           );
           assert.isNotEmpty(response.data, "response data");
-          assert.isNotEmpty(response.data.result, "tx success");
+          assert.isBoolean(response.data.result, "tx success");
           done();
         })
         .catch((err) => done(err));
@@ -126,7 +126,7 @@ describe("UPI 2.0 API Adapter", () => {
             response.status
           );
           assert.isNotEmpty(response.data, "response data");
-          assert.isNotEmpty(response.data.result, "tx success");
+          assert.isBoolean(response.data.result, "tx success");
           done();
         })
         .catch((err) => done(err));
