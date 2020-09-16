@@ -12,8 +12,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(xmlparser());
 
-app.post('/', function (req: any, res: any) {
-    gcpservice(req, res);
+app.post('/', function (req: express.Request, res: any) {
+  console.log(req.headers);
+  gcpservice(req, res);
 });
 
 app.post('/callback/:bank', function (req: any, res: any) {
