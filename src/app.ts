@@ -13,7 +13,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(xmlparser());
 
 app.post('/', function (req: express.Request, res: any) {
-  console.log(req.headers);
   gcpservice(req, res);
 });
 

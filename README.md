@@ -1,6 +1,8 @@
 # PayPal External Adapter
 
 ## TODO
+* Update to use chainlink outgoin auth
+* DEVOPS: update upi-adapter production proxy use
 * Update to have collect request expire 10 minutes after
 
 * Have a scheduling mechanism for getting tx status if no callback
