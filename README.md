@@ -1,11 +1,12 @@
 # PayPal External Adapter
 
 ## TODO
-* Update to use chainlink outgoin auth
-* DEVOPS: update upi-adapter production proxy use
-* Update to have collect request expire 10 minutes after
 
+* Update to have collect request expire 10 minutes after
+* Update to use chainlink outgoin auth
 * Have a scheduling mechanism for getting tx status if no callback
+
+* Have a scheduling mechanism for refreshing bank session token.
 * Create an abstraction for using different Banks API's
 
 ## How to use

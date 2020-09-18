@@ -23,4 +23,5 @@ export = {
   },
   NODE_URL: process.env.NODE_URL,
   NODE_AUTH: process.env.NODE_AUTH,
+  NODE_AUTH_OUT: process.env.NODE_AUTH_OUT,
 }

@@ -14,6 +14,7 @@ import {
 } from "./handlers";
 
 import { HTTPClient } from "./httpClients";
+import config from "./config";
 
 export class JobRequest {
   id: string;
@@ -61,9 +62,14 @@ export const createRequest = async (input: JobRequest) => {
   }
 };
 
-export const requestWrapper = async (req: JobRequest): Promise<JobResponse> => {
-  let response = <JobResponse>{ jobRunID: req.id || "" };
-  return createRequest(req)
+export const requestWrapper = async (req: any): Promise<JobResponse> => {
+  let body: JobRequest = req.body;
+  if (!auth(req.headers)) {
+    return { jobRunID: body.id, statusCode: 401, error: "Unauthorized" };
+  }
+
+  let response = <JobResponse>{ jobRunID: body.id || "" };
+  return createRequest(body)
     .then(({ statusCode, data }) => {
       response.status = data.status || "success";
       response.pending = data.status === "pending";
@@ -81,15 +87,46 @@ export const requestWrapper = async (req: JobRequest): Promise<JobResponse> => {
 
 // createRequest() wrapper for GCP
 export const gcpservice = async (req: any = {}, res: any): Promise<any> => {
-  let response = await requestWrapper(<JobRequest>req.body);
+  let response = await requestWrapper(req);
   res.status(response.statusCode).send(response);
 };
 
 // createRequest() wrapper for AWS Lambda
 export const handler = async (
-  event: JobRequest,
+  event: { body: JobRequest, headers: any },
   context: any = {},
   callback: { (error: any, result: any): void }
 ): Promise<any> => {
   callback(null, await requestWrapper(event));
+};
+
+const auth = (headers: any): boolean => {
+  if (!headers) {
+    return false;
+  }
+
+  let authorization = headers["authorization"];
+  if (!authorization) {
+    return false;
+  }
+
+  let parts = authorization.split(" ");
+  if (parts.length < 2) {
+    return false;
+  }
+
+  let scheme = parts[0],
+    credentials = parts[1];
+  if (!/Bearer/i.test(scheme)) {
+    return false;
+  }
+  if (credentials.length <= 0) {
+    return false;
+  }
+
+  if (credentials !== config.NODE_AUTH_OUT) {
+    return false;
+  }
+
+  return true;
 };

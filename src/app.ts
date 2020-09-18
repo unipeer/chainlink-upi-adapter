@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import xmlparser from "express-xml-bodyparser";
 
 import {gcpservice} from "./index";
@@ -12,11 +12,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(xmlparser());
 
-app.post('/', function (req: express.Request, res: any) {
+app.post('/', function (req: Request, res: Response) {
   gcpservice(req, res);
 });
 
-app.post('/callback/:bank', function (req: any, res: any) {
+app.post('/callback/:bank', function (req: Request, res: Response) {
     callbackHandle(req, res);
 });
 
