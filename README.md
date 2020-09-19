@@ -1,10 +1,10 @@
-# PayPal External Adapter
+# UPI 2.0 External Adapter
 
 ## TODO
 
-* Update to have collect request expire 10 minutes after
-* Update to use chainlink outgoin auth
 * Have a scheduling mechanism for getting tx status if no callback
+    plus call the tx status aggressively for UAT blocked p2p transactions.
+* Update to have collect request expire 10 minutes after
 
 * Have a scheduling mechanism for refreshing bank session token.
 * Create an abstraction for using different Banks API's
