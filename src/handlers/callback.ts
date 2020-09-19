@@ -14,7 +14,7 @@ export const callbackHandle = async (req: any, res: any) => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": config.NODE_AUTH,
+          "Authorization": `Bearer ${config.NODE_AUTH}`,
         },
         body: JSON.stringify({
           id: result.id,
