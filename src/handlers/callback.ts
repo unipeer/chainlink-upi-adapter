@@ -1,27 +1,18 @@
 import fetch from "node-fetch";
 
 import config from "../config";
-import { HTTPCallbackClass } from "../httpClients";
+import { HTTPCallbackClass, ChainlinkHTTPClient } from "../httpClients";
 
 export const callbackHandle = async (req: any, res: any) => {
+  const chainlink = new ChainlinkHTTPClient();
   const httpCallback = new HTTPCallbackClass();
+
   return httpCallback
     .processCallback(req.body)
     .then((result) => {
       console.log(result);
 
-      fetch(config.NODE_URL + `/v2/runs/${result.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${config.NODE_AUTH}`,
-        },
-        body: JSON.stringify({
-          id: result.id,
-          data: { result: result.txstatus }, // Payment made successfully or not
-          pending: false
-        }),
-      })
+      chainlink.patchUpdateRun(result.id, result.txstatus )
         .catch((e) => console.log(e))
         .finally(() => res.type(result.type).status(result.statusCode).send(result.body));
     })

@@ -31,9 +31,7 @@ export class HTTPClient {
   /**
    * Creates a new HTTPClient.
    *
-   * @param url required, the base url of all requests.
    * @param init initializer for requests, defaults to empty.
-   * @param cache cache storage for requests, defaults to global.
    */
   constructor(init?: RequestInit) {
     this.init = init || {};
