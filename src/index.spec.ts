@@ -114,7 +114,7 @@ describe("UPI 2.0 API Adapter", () => {
         .catch((err) => done(err));
     }).timeout(timeout);
 
-    it("should get Tx Status details using ENV variable", (done) => {
+    it("should get Tx status details using ENV variable", (done) => {
       process.env.API_METHOD = "getStatus";
       req.body.data = <Request>{
         method: "collectRequest",

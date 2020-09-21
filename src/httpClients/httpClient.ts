@@ -9,6 +9,7 @@ import {
   GetStatusRequest,
   ValidateVPARequest,
   CollectResponse,
+  TxStatus,
   TxStatusResponse,
 } from "../types";
 
@@ -266,19 +267,19 @@ export class HTTPClient {
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
-        let txstatus: string;
+        let txstatus: TxStatus;
         let result: any = Object.entries(res)[0][1];
 
         // Adapt the txstatus of the txId
         switch (result.txnstatus.toLowerCase()) {
           case "success":
-            txstatus = "successful";
+            txstatus = TxStatus.SUCCESSFUL;
             break;
           case "failure":
-            txstatus = "failed";
+            txstatus = TxStatus.FAILED;
             break;
           case "in progress":
-            txstatus = "pending";
+            txstatus = TxStatus.PENDING;
             break;
         }
 
@@ -286,7 +287,7 @@ export class HTTPClient {
           success: result.status == 1,
           txId: body.txId as string,
           txStatus: txstatus,
-          txSuccess: txstatus === "successful" ? true : false,
+          txSuccess: txstatus === TxStatus.SUCCESSFUL,
           // Details about the Success/Failure
           message: Object.keys(result.txnerrorcode).length !== 0 ? result.txnerrorcode : result.txnstatus,
           sender: result.payeraddr,
