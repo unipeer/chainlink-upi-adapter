@@ -1,11 +1,11 @@
 import fetch from "node-fetch";
 
 import { GetStatusRequest, TxStatusResponse } from "../types";
-import { HTTPClient } from "../httpClients";
+import { HttpClient } from "../httpClients";
 
 export const getTxStatusHandle = async (
-  httpClient: HTTPClient,
-  data: GetStatusRequest
+  data: GetStatusRequest,
+  httpClient = HttpClient,
 ) => {
   if (!("txId" in data)) {
     throw { statusCode: 400, data: "missing required parameters" };

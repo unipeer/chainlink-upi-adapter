@@ -25,7 +25,7 @@ class TxIdParams extends AuthTokenParams {
   txId: string;
 }
 
-export class HTTPClient {
+export class HttpClientClass {
   private readonly init: RequestInit;
   private readonly path = config.BANK.rbl.url;
 
@@ -376,3 +376,5 @@ export class HTTPClient {
     return Object.assign(init, this.init);
   }
 }
+
+export const HttpClient = new HttpClientClass();

@@ -1,11 +1,12 @@
 import fetch from "node-fetch";
 
 import config from "../config";
-import { HTTPCallbackClass, ChainlinkHTTPClient } from "../httpClients";
+import { HttpCallback, ChainlinkHttpClient } from "../httpClients";
+import { Event, TxEvent } from "../event";
 
 export const callbackHandle = async (req: any, res: any) => {
-  const chainlink = new ChainlinkHTTPClient();
-  const httpCallback = new HTTPCallbackClass();
+  const chainlink = ChainlinkHttpClient;
+  const httpCallback = HttpCallback;
 
   return httpCallback
     .processCallback(req.body)
@@ -13,7 +14,8 @@ export const callbackHandle = async (req: any, res: any) => {
       console.log(result);
 
       chainlink.patchUpdateRun(result.id, result.txstatus )
-        .catch((e) => console.log(e))
+        .then(() => Event.collectEvent.emit("stop", result.refId))
+        .catch((e) => console.error(e))
         .finally(() => res.type(result.type).status(result.statusCode).send(result.body));
     })
     .catch(({ statusCode, type, body}) => {

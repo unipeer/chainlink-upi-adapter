@@ -2,8 +2,6 @@
 
 ## TODO
 
-* Have a scheduling mechanism for getting tx status if no callback
-    plus call the tx status aggressively for UAT blocked p2p transactions.
 * Update to have collect request expire 10 minutes after
 
 * Have a scheduling mechanism for refreshing bank session token.

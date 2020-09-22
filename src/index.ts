@@ -13,7 +13,6 @@ import {
   validateVPAHandle,
 } from "./handlers";
 
-import { HTTPClient } from "./httpClients";
 import config from "./config";
 
 export class JobRequest {
@@ -34,24 +33,23 @@ export const createRequest = async (input: JobRequest) => {
   const data = input.data;
   const method = process.env.API_METHOD || data.method || "";
 
-  const client = new HTTPClient();
   switch (method.toLowerCase()) {
     case "collectrequest":
-      return collectRequestHandle(client, input.id, <CollectRequest>data).then(
+      return collectRequestHandle(input.id, <CollectRequest>data).then(
         (response: HandlerResponse<CollectResponse>) => {
           response.data.result = response.data.txId || "";
           return response;
         }
       );
     case "getstatus":
-      return getTxStatusHandle(client, <GetStatusRequest>data).then(
+      return getTxStatusHandle(<GetStatusRequest>data).then(
         (response: HandlerResponse<TxStatusResponse>) => {
           response.data.result = response.data.txSuccess || false;
           return response;
         }
       );
     case "validatevpa":
-      return validateVPAHandle(client, <ValidateVPARequest>data).then(
+      return validateVPAHandle(<ValidateVPARequest>data).then(
         (response: any) => {
           response.data.result = response.data.success || false;
           return response;

@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 import config from "../config";
 
-export class HTTPCallbackClass {
+export class HttpCallbackClass {
   private readonly algorithm = "aes-256-cbc";
   private readonly iv = Buffer.alloc(16);
   private readonly key = config.BANK.rbl.callback_key;
@@ -73,3 +73,4 @@ export class HTTPCallbackClass {
   }
 }
 
+export const HttpCallback = new HttpCallbackClass();
