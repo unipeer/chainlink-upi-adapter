@@ -168,7 +168,6 @@ export class HttpClientClass {
    * @param body required, the request body as an object.
    */
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
-
     let expire = dayjs()
       .tz("Asia/Kolkata")
       .add(config.PAY_TIMEOUT_MINS, "minute")
@@ -279,21 +278,8 @@ export class HttpClientClass {
       .then((res) => res.text())
       .then((res) => xmlParser.toJson(res, { object: true }))
       .then((res) => {
-        let txstatus: TxStatus;
         let result: any = Object.entries(res)[0][1];
-
-        // Adapt the txstatus of the txId
-        switch (result.txnstatus.toLowerCase()) {
-          case "success":
-            txstatus = TxStatus.SUCCESSFUL;
-            break;
-          case "failure":
-            txstatus = TxStatus.FAILED;
-            break;
-          case "in progress":
-            txstatus = TxStatus.PENDING;
-            break;
-        }
+        let txstatus: TxStatus = this.parseTxStatus(result.txnstatus);
 
         return {
           success: result.status == 1,
@@ -374,6 +360,30 @@ export class HttpClientClass {
           refId: body.refId,
         };
       });
+  }
+
+  /**
+   * Adapt the txstatus of the txId
+   * to the TxStatus enum.
+   *
+   */
+  private parseTxStatus(txnstatus: string): TxStatus {
+    let status = TxStatus.FAILED;
+    if (!txnstatus || txnstatus.length == 0) return status;
+
+    switch (txnstatus.toLowerCase()) {
+      case "success":
+        status = TxStatus.SUCCESSFUL;
+        break;
+      case "failure":
+        status = TxStatus.FAILED;
+        break;
+      case "in progress":
+        status = TxStatus.PENDING;
+        break;
+    }
+
+    return status;
   }
 
   /**
