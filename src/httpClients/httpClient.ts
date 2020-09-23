@@ -2,6 +2,8 @@ import fetch, { Headers, RequestInit, Response } from "node-fetch";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 import config from "../config";
 
@@ -42,6 +44,8 @@ export class HttpClientClass {
         Authorization: config.BANK.rbl.auth,
       };
     }
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
   }
 
   private async login(): Promise<SessionParams> {
@@ -164,7 +168,9 @@ export class HttpClientClass {
    * @param body required, the request body as an object.
    */
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
+
     let expire = dayjs()
+      .tz("Asia/Kolkata")
       .add(config.PAY_TIMEOUT_MINS, "minute")
       .format("YYYY-MM-DD HH:mm:ss");
     console.log(expire);

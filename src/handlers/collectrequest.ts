@@ -6,7 +6,7 @@ import { HttpClient } from "../httpClients";
 import { Event, TxEvent } from "../event";
 
 export const collectRequestHandle = async (
-  jobId: string,
+  jobRunId: string,
   data: CollectRequest,
   httpClient = HttpClient,
 ) => {
@@ -17,7 +17,7 @@ export const collectRequestHandle = async (
   // Use the Chainlink Job Id as ref
   // so that we know the Job to update during the HTTP callback.
   const body = {
-    refId: jobId,
+    refId: jobRunId,
     ...data,
   };
 
@@ -31,7 +31,7 @@ export const collectRequestHandle = async (
         throw { statusCode: 500, data: result.message };
       }
 
-      Event.collectEvent.emit("start", <TxEvent>{ txId: result.txId, jobId: result.refId });
+      Event.collectEvent.emit("start", <TxEvent>{ txId: result.txId, jobRunId: result.refId });
 
       return {
         statusCode: 201,

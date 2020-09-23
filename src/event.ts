@@ -12,7 +12,7 @@ import config from "./config";
 
 export type TxEvent = {
   txId: string;
-  jobId: string;
+  jobRunId: string;
 };
 
 export class EventService {
@@ -32,8 +32,8 @@ export class EventService {
 
   async wireup() {
     this.collectEvent.on("start", async (tx: TxEvent) => {
-      const { txId, jobId } = tx;
-      this.pendingJobs.add(jobId);
+      const { txId, jobRunId } = tx;
+      this.pendingJobs.add(jobRunId);
 
       setTimeout(() => {
         this.pollTxStatus(tx);
@@ -45,13 +45,13 @@ export class EventService {
       }, 2 * 1000 /* 2 seconds */);
     });
 
-    this.collectEvent.on("stop", async (jobId: string) => {
-      this.pendingJobs.delete(jobId);
+    this.collectEvent.on("stop", async (jobRunId: string) => {
+      this.pendingJobs.delete(jobRunId);
     });
   }
 
   async pollTxStatus(tx: TxEvent) {
-    const { txId, jobId } = tx;
+    const { txId, jobRunId } = tx;
     console.log("Polling tx status for tx:", txId);
 
     this.httpClient
@@ -59,19 +59,19 @@ export class EventService {
       .then((res: TxStatusResponse) => {
         console.log(res);
 
-        if (this.pendingJobs.has(jobId) && res.txStatus != TxStatus.PENDING) {
+        if (this.pendingJobs.has(jobRunId) && res.txStatus != TxStatus.PENDING) {
           this.chainlinkClient
-            .patchUpdateRun(jobId, res.txSuccess)
+            .patchUpdateRun(jobRunId, res.txSuccess)
             .then((res) => res.text())
             .then((res) => {
               console.log(res);
-              Event.collectEvent.emit("stop", jobId);
+              Event.collectEvent.emit("stop", jobRunId);
             });
         }
       })
       .catch((e) => console.error(e))
       .finally(() => {
-        if (this.pendingJobs.has(jobId)) {
+        if (this.pendingJobs.has(jobRunId)) {
           setTimeout(() => {
             this.pollTxStatus(tx);
           }, 2 * 1000 /* 2 second */);

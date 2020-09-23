@@ -34,6 +34,7 @@ export class ChainlinkHttpClientClass {
         pending: false,
       }),
     });
+    console.log(init);
 
     return fetch(path, init);
   }
