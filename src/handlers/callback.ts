@@ -11,7 +11,6 @@ export const callbackHandle = async (req: any, res: any) => {
   return httpCallback
     .processCallback(req.body)
     .then((result) => {
-      console.log(result);
 
       chainlink.patchUpdateRun(result.id, result.txstatus )
         .then(() => Event.collectEvent.emit("stop", result.id))
