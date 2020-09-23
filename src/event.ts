@@ -63,7 +63,8 @@ export class EventService {
           if (res.txStatus != TxStatus.PENDING) {
             this.chainlinkClient
               .patchUpdateRun(jobId, res.txSuccess)
-              .then((res) => { console.log(res.body); Event.collectEvent.emit("stop", jobId)});
+              .then(res => res.json)
+              .then((res) => { console.log(res); Event.collectEvent.emit("stop", jobId)});
           } else {
             setTimeout(() => {
               this.pollTxStatus(tx);
