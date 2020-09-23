@@ -59,19 +59,24 @@ export class EventService {
       .then((res: TxStatusResponse) => {
         console.log(res);
 
-        if (this.pendingJobs.has(jobId)) {
-          if (res.txStatus != TxStatus.PENDING) {
-            this.chainlinkClient
-              .patchUpdateRun(jobId, res.txSuccess)
-              .then(res => res.json())
-              .then((res) => { console.log(res); Event.collectEvent.emit("stop", jobId)});
-          } else {
-            setTimeout(() => {
-              this.pollTxStatus(tx);
-            }, 2 * 1000 /* 2 second */);
-          }
+        if (this.pendingJobs.has(jobId) && res.txStatus != TxStatus.PENDING) {
+          this.chainlinkClient
+            .patchUpdateRun(jobId, res.txSuccess)
+            .then((res) => res.text())
+            .then((res) => {
+              console.log(res);
+              Event.collectEvent.emit("stop", jobId);
+            });
         }
-      }).catch((e) => console.error(e));
+      })
+      .catch((e) => console.error(e))
+      .finally(() => {
+        if (this.pendingJobs.has(jobId)) {
+          setTimeout(() => {
+            this.pollTxStatus(tx);
+          }, 2 * 1000 /* 2 second */);
+        }
+      });
   }
 }
 
