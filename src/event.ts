@@ -57,11 +57,13 @@ export class EventService {
     this.httpClient
       .getTxStatus(<GetStatusRequest>{ txId })
       .then((res: TxStatusResponse) => {
+        console.log(res);
+
         if (this.pendingJobs.has(jobId)) {
           if (res.txStatus != TxStatus.PENDING) {
             this.chainlinkClient
               .patchUpdateRun(jobId, res.txSuccess)
-              .then(() => Event.collectEvent.emit("stop", jobId));
+              .then((res) => { console.log(res.body); Event.collectEvent.emit("stop", jobId)});
           } else {
             setTimeout(() => {
               this.pollTxStatus(tx);

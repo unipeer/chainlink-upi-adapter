@@ -167,6 +167,7 @@ export class HttpClientClass {
     let expire = dayjs()
       .add(config.PAY_TIMEOUT_MINS, "minute")
       .format("YYYY-MM-DD HH:mm:ss");
+    console.log(expire);
 
     let getBody = (params: TxIdParams) => ({
       header: {
