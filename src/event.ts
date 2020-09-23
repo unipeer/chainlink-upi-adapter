@@ -8,6 +8,8 @@ import {
 } from "./httpClients";
 import { GetStatusRequest, TxStatus, TxStatusResponse } from "./types";
 
+import config from "./config";
+
 export type TxEvent = {
   txId: string;
   jobId: string;
@@ -35,7 +37,7 @@ export class EventService {
 
       setTimeout(() => {
         this.pollTxStatus(tx);
-      }, 10 * 3600 * 1000 /* 10 mins */);
+      }, config.PAY_TIMEOUT_MINS * 3600 * 1000 /* X mins */);
 
       // FIXME: only for UAT. Remove in production
       setTimeout(() => {
@@ -50,7 +52,7 @@ export class EventService {
 
   async pollTxStatus(tx: TxEvent) {
     const { txId, jobId } = tx;
-    console.log("Polling tx status for job:", jobId);
+    console.log("Polling tx status for tx:", txId);
 
     this.httpClient
       .getTxStatus(<GetStatusRequest>{ txId })

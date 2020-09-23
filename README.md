@@ -2,8 +2,6 @@
 
 ## TODO
 
-* Update to have collect request expire 10 minutes after
-
 * Have a scheduling mechanism for refreshing bank session token.
 * Create an abstraction for using different Banks API's
 

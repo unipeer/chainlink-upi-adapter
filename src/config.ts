@@ -8,7 +8,8 @@ const getBasicAuth = (user, pass) => {
 };
 
 export = {
-  EA_PORT: process.env.EA_PORT || 8080,
+  EA_PORT: process.env.EA_PORT || 8080,     // Port this server will listen on
+  PAY_TIMEOUT_MINS: 10,                     // Collect requests timeout/expire
   BANK: {
     rbl: {
       url: process.env.RBL_URL,

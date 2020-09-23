@@ -1,6 +1,7 @@
 import fetch, { Headers, RequestInit, Response } from "node-fetch";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
+import dayjs from "dayjs";
 
 import config from "../config";
 
@@ -163,6 +164,10 @@ export class HttpClientClass {
    * @param body required, the request body as an object.
    */
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
+    let expire = dayjs()
+      .add(config.PAY_TIMEOUT_MINS, "minute")
+      .format("YYYY-MM-DD HH:mm:ss");
+
     let getBody = (params: TxIdParams) => ({
       header: {
         sessiontoken: params.session,
@@ -171,7 +176,7 @@ export class HttpClientClass {
       mrchOrgId: config.BANK.rbl.mrchOrgId,
       aggrOrgId: config.BANK.rbl.aggrOrgId,
       note: body.note,
-      validupto: "2020-10-08 00:00:00",
+      validupto: expire,
       refId: body.refId,
       refUrl: "http://google.com",
       orgTxnId: params.txId,
@@ -289,7 +294,10 @@ export class HttpClientClass {
           txStatus: txstatus,
           txSuccess: txstatus === TxStatus.SUCCESSFUL,
           // Details about the Success/Failure
-          message: Object.keys(result.txnerrorcode).length !== 0 ? result.txnerrorcode : result.txnstatus,
+          message:
+            Object.keys(result.txnerrorcode).length !== 0
+              ? result.txnerrorcode
+              : result.txnstatus,
           sender: result.payeraddr,
           receiver: result.payeeaddr,
           custRRN: result.custref,
