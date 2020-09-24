@@ -46,13 +46,14 @@ export class EventService {
     });
 
     this.collectEvent.on("stop", async (jobRunId: string) => {
+      console.log("Stopping job run:", jobRunId);
       this.pendingJobs.delete(jobRunId);
     });
   }
 
   async pollTxStatus(tx: TxEvent) {
     const { txId, jobRunId } = tx;
-    console.log("Polling tx status for tx:", txId);
+    console.log("Polling tx status for tx:", txId, "job run:", jobRunId);
 
     this.httpClient
       .getTxStatus(<GetStatusRequest>{ txId })
