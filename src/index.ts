@@ -14,7 +14,7 @@ import {
 } from "./handlers";
 
 import config from "./config";
-import {getClient} from "./httpClients";
+import {getHttpClient} from "./httpClients";
 
 export class JobRequest {
   id: string;
@@ -34,7 +34,7 @@ export const createRequest = async (input: JobRequest) => {
   const data = input.data;
   const method = process.env.API_METHOD || data.method || "";
   const bank = process.env.API_BANK || data.bank || "rbl";
-  const client = getClient(bank);
+  const client = getHttpClient(bank);
 
   switch (method.toLowerCase()) {
     case "collectrequest":

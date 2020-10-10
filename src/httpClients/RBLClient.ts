@@ -162,15 +162,6 @@ export class RBLClientClass extends IHttpClient {
       });
   }
 
-  /**
-   * Request to start a payment request from the sender to a receiver
-   * with the amount via their UPI Virtual Addresses.
-   *
-   * The sender must approve the request from their UPI App
-   * by confirming the Tx and entering their MPIN.
-   *
-   * @param body required, the request body as an object.
-   */
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
     let expire = dayjs()
       .tz("Asia/Kolkata")
@@ -234,15 +225,6 @@ export class RBLClientClass extends IHttpClient {
       });
   }
 
-  /**
-   * Request to confirm the status of a payment transaction
-   * associated with the `body.txId`.
-   *
-   * This API should only be called after a collect request
-   * has expired and no HTTP callback for the txId was received.
-   *
-   * @param body required, the request body as an object.
-   */
   public async getTxStatus(body: GetStatusRequest): Promise<TxStatusResponse> {
     let getBody = (params: AuthTokenParams) => ({
       header: {
@@ -301,18 +283,6 @@ export class RBLClientClass extends IHttpClient {
       });
   }
 
-  /**
-   * API to confirm an user entered UPI Id or
-   * VPA (Virtual Payment Address) is valid or not.
-   *
-   * This should not be used through a contract but
-   * is provided though the same oracle to completeness.
-   *
-   * Oracle owner can call this API through external auth
-   * or by via a web/external initiator as part of chainlink framework.
-   *
-   * @param body required, the request body as an object.
-   */
   public async validateVPA(body: ValidateVPARequest): Promise<any> {
     let getBody = (params: AuthTokenParams) => ({
       header: {

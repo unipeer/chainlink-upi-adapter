@@ -4,7 +4,7 @@ import {
   IHttpClient,
   ChainlinkClient,
   ChainlinkClientClass,
-  getClient
+  getHttpClient
 } from "./httpClients";
 import { GetStatusRequest, TxStatus, TxStatusResponse } from "./types";
 
@@ -53,7 +53,7 @@ export class EventService {
     const { txId, jobRunId, bank } = tx;
     console.log("Polling tx status for tx:", txId, "job run:", jobRunId);
 
-    getClient(bank)
+    getHttpClient(bank)
       .getTxStatus(<GetStatusRequest>{ txId })
       .then((res: TxStatusResponse) => {
 

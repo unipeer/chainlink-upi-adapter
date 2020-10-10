@@ -4,7 +4,9 @@ import crypto from "crypto";
 
 import config from "../config";
 
-export class HttpCallbackClass {
+import {ICallbackClient} from "./ICallbackClient";
+
+export class RBLCallbackClass extends ICallbackClient {
   private readonly algorithm = "aes-256-cbc";
   private readonly iv = Buffer.alloc(16);
   private readonly key = config.BANK.rbl.callback_key;
@@ -14,11 +16,15 @@ export class HttpCallbackClass {
     "<statuscode>0</statuscode>" +
     "<description>ACK Success</description>" +
     "</UPI_PUSH_Response>";
-  public readonly failRes =
+  private readonly failRes =
     '<UPI_PUSH_Response xmlns="http://rssoftware.com/callbackadapter/domain/">' +
     "<statuscode>1</statuscode>" +
     "<description>Bad Request</description>" +
     "</UPI_PUSH_Response>";
+
+  constructor() {
+    super("rbl");
+  }
 
   private encrypt(text) {
     let cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
@@ -73,4 +79,4 @@ export class HttpCallbackClass {
   }
 }
 
-export const HttpCallback = new HttpCallbackClass();
+export const RBLCallback = new RBLCallbackClass();
