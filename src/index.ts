@@ -14,6 +14,7 @@ import {
 } from "./handlers";
 
 import config from "./config";
+import {getClient} from "./httpClients";
 
 export class JobRequest {
   id: string;
@@ -32,24 +33,26 @@ class JobResponse {
 export const createRequest = async (input: JobRequest) => {
   const data = input.data;
   const method = process.env.API_METHOD || data.method || "";
+  const bank = process.env.API_BANK || data.bank || "rbl";
+  const client = getClient(bank);
 
   switch (method.toLowerCase()) {
     case "collectrequest":
-      return collectRequestHandle(input.id, <CollectRequest>data).then(
+      return collectRequestHandle(input.id, <CollectRequest>data, client).then(
         (response: HandlerResponse<CollectResponse>) => {
           response.data.result = response.data.txId || "";
           return response;
         }
       );
     case "getstatus":
-      return getTxStatusHandle(<GetStatusRequest>data).then(
+      return getTxStatusHandle(<GetStatusRequest>data, client).then(
         (response: HandlerResponse<TxStatusResponse>) => {
           response.data.result = response.data.txSuccess || false;
           return response;
         }
       );
     case "validatevpa":
-      return validateVPAHandle(<ValidateVPARequest>data).then(
+      return validateVPAHandle(<ValidateVPARequest>data, client).then(
         (response: any) => {
           response.data.result = response.data.success || false;
           return response;

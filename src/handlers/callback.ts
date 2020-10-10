@@ -1,11 +1,11 @@
 import fetch from "node-fetch";
 
 import config from "../config";
-import { HttpCallback, ChainlinkHttpClient } from "../httpClients";
+import { HttpCallback, ChainlinkClient } from "../httpClients";
 import { Event, TxEvent } from "../event";
 
 export const callbackHandle = async (req: any, res: any) => {
-  const chainlink = ChainlinkHttpClient;
+  const chainlink = ChainlinkClient;
   const httpCallback = HttpCallback;
 
   return httpCallback

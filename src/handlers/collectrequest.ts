@@ -2,13 +2,13 @@ import { v1 as uuidv1 } from "uuid";
 import fetch from "node-fetch";
 
 import { CollectRequest, CollectResponse } from "../types";
-import { HttpClient } from "../httpClients";
+import { IHttpClient } from "../httpClients";
 import { Event, TxEvent } from "../event";
 
 export const collectRequestHandle = async (
   jobRunId: string,
   data: CollectRequest,
-  httpClient = HttpClient,
+  httpClient: IHttpClient
 ) => {
   if (!("amount" in data) || !("sender" in data) || !("receiver" in data)) {
     throw { statusCode: 400, data: "missing required parameters" };
@@ -31,7 +31,11 @@ export const collectRequestHandle = async (
         throw { statusCode: 500, data: result.message };
       }
 
-      Event.collectEvent.emit("start", <TxEvent>{ txId: result.txId, jobRunId: result.refId });
+      Event.collectEvent.emit("start", <TxEvent>{
+        txId: result.txId,
+        jobRunId: result.refId,
+        bank: httpClient.getName(),
+      });
 
       return {
         statusCode: 201,

@@ -1,5 +1,6 @@
 export class Request {
   method?: string;
+  bank?: string;
 }
 
 export class CollectRequest extends Request {

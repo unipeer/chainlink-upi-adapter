@@ -16,6 +16,8 @@ import {
   TxStatusResponse,
 } from "../types";
 
+import {IHttpClient} from "./IHttpClient";
+
 class SessionParams {
   session: string;
 }
@@ -28,7 +30,7 @@ class TxIdParams extends AuthTokenParams {
   txId: string;
 }
 
-export class HttpClientClass {
+export class RBLClientClass extends IHttpClient {
   private readonly init: RequestInit;
   private readonly path = config.BANK.rbl.url;
 
@@ -38,6 +40,7 @@ export class HttpClientClass {
    * @param init initializer for requests, defaults to empty.
    */
   constructor(init?: RequestInit) {
+    super("rbl");
     this.init = init || {};
     if (!this.init.headers) {
       this.init.headers = {
@@ -98,6 +101,7 @@ export class HttpClientClass {
       hmac: "JiSKgtw6E2s88OJmd25GQQ==",
     };
 
+    console.log(js2xml.parse("generateauthtokenreq", reqBody));
     let init = this.initMerge({
       method: "POST",
       headers: {
@@ -401,4 +405,4 @@ export class HttpClientClass {
   }
 }
 
-export const HttpClient = new HttpClientClass();
+export const RBLClient = new RBLClientClass();

@@ -1,10 +1,10 @@
 import { EventEmitter } from "events";
 
 import {
-  HttpClient,
-  HttpClientClass,
-  ChainlinkHttpClient,
-  ChainlinkHttpClientClass,
+  IHttpClient,
+  ChainlinkClient,
+  ChainlinkClientClass,
+  getClient
 } from "./httpClients";
 import { GetStatusRequest, TxStatus, TxStatusResponse } from "./types";
 
@@ -13,26 +13,24 @@ import config from "./config";
 export type TxEvent = {
   txId: string;
   jobRunId: string;
+  bank: string;
 };
 
 export class EventService {
   collectEvent = new EventEmitter();
-  httpClient: HttpClientClass;
-  chainlinkClient: ChainlinkHttpClientClass;
+  chainlinkClient: ChainlinkClientClass;
   pendingJobs = new Set();
 
   constructor({
-    httpClient = HttpClient,
-    chainlinkClient = ChainlinkHttpClient,
+    chainlinkClient = ChainlinkClient,
   } = {}) {
-    this.httpClient = httpClient;
     this.chainlinkClient = chainlinkClient;
     this.wireup();
   }
 
   async wireup() {
     this.collectEvent.on("start", async (tx: TxEvent) => {
-      const { txId, jobRunId } = tx;
+      const { jobRunId } = tx;
       this.pendingJobs.add(jobRunId);
 
       setTimeout(() => {
@@ -52,10 +50,10 @@ export class EventService {
   }
 
   async pollTxStatus(tx: TxEvent) {
-    const { txId, jobRunId } = tx;
+    const { txId, jobRunId, bank } = tx;
     console.log("Polling tx status for tx:", txId, "job run:", jobRunId);
 
-    this.httpClient
+    getClient(bank)
       .getTxStatus(<GetStatusRequest>{ txId })
       .then((res: TxStatusResponse) => {
 

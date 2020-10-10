@@ -1,11 +1,11 @@
 import fetch from "node-fetch";
 
 import { GetStatusRequest, TxStatusResponse } from "../types";
-import { HttpClient } from "../httpClients";
+import { IHttpClient } from "../httpClients";
 
 export const getTxStatusHandle = async (
   data: GetStatusRequest,
-  httpClient = HttpClient,
+  httpClient: IHttpClient,
 ) => {
   if (!("txId" in data)) {
     throw { statusCode: 400, data: "missing required parameters" };
@@ -24,6 +24,7 @@ export const getTxStatusHandle = async (
       };
     })
     .catch((error: Error) => {
+      console.log(error);
       throw { statusCode: 503, data: error.message };
     });
 };

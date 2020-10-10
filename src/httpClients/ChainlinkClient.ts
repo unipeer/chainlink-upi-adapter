@@ -3,7 +3,7 @@ import { URL } from "url";
 
 import config from "../config";
 
-export class ChainlinkHttpClientClass {
+export class ChainlinkClientClass {
   private readonly init: RequestInit;
   private readonly url = config.NODE_URL;
 
@@ -54,4 +54,4 @@ export class ChainlinkHttpClientClass {
   }
 }
 
-export const ChainlinkHttpClient = new ChainlinkHttpClientClass();
+export const ChainlinkClient = new ChainlinkClientClass();

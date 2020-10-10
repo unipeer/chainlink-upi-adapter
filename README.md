@@ -7,7 +7,6 @@
 * Add metrics monitoring
 
 * Have a scheduling mechanism for refreshing bank session token.
-* Create an abstraction for using different Banks API's
 
 ## How to use
 
