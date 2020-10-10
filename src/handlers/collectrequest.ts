@@ -40,7 +40,7 @@ export const collectRequestHandle = async (
       return {
         statusCode: 201,
         data: {
-          status: "pending",
+          status: result.status || "pending",
           ...result,
         },
       };

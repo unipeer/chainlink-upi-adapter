@@ -30,7 +30,9 @@ export class EventService {
 
   async wireup() {
     this.collectEvent.on("start", async (tx: TxEvent) => {
-      const { jobRunId } = tx;
+      const { jobRunId, bank } = tx;
+      if (bank == "mock") return;
+
       this.pendingJobs.add(jobRunId);
 
       setTimeout(() => {
