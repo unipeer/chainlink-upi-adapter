@@ -14,6 +14,7 @@ export type TxEvent = {
   txId: string;
   jobRunId: string;
   bank: string;
+  result?: boolean;
 };
 
 export class EventService {
@@ -31,7 +32,12 @@ export class EventService {
   async wireup() {
     this.collectEvent.on("start", async (tx: TxEvent) => {
       const { jobRunId, bank } = tx;
-      if (bank == "mock") return;
+      if (bank == "mock") {
+        await this.sleep(2000);
+        console.log("marking mock job:", jobRunId, "as", tx.result);
+        return this.chainlinkClient
+          .patchUpdateRun(jobRunId, tx.result);
+      };
 
       this.pendingJobs.add(jobRunId);
 
@@ -73,6 +79,10 @@ export class EventService {
           }, 2 * 1000 /* 2 second */);
         }
       });
+  }
+
+  async sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 }
 

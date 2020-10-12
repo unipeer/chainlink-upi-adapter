@@ -35,12 +35,13 @@ export const collectRequestHandle = async (
         txId: result.txId,
         jobRunId: result.refId,
         bank: httpClient.getName(),
+        result: result.status == "success", // Needed for mock client
       });
 
       return {
         statusCode: 201,
         data: {
-          status: result.status || "pending",
+          status: "pending",
           ...result,
         },
       };
