@@ -25,7 +25,7 @@ export class MockClientClass extends IHttpClient {
     const txId = uuidv1();
     let res: CollectResponse = {
       success: true,
-      refId: txId,
+      refId: body.refId,
       txId: txId,
       message: "successful",
     };
