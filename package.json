@@ -1,6 +1,6 @@
 {
   "name": "chainlink-upi-ea",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": "Shaleen Jain (shaleen@jain.sh)",
   "description": "A Chainlink external adapter for creating and confirming UPI Bank transactions",
   "main": "./dist/index.js",
