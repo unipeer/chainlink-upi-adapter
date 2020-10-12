@@ -14,7 +14,7 @@ export type TxEvent = {
   txId: string;
   jobRunId: string;
   bank: string;
-  result?: boolean;
+  mockResult?: boolean;
 };
 
 export class EventService {
@@ -34,9 +34,9 @@ export class EventService {
       const { jobRunId, bank } = tx;
       if (bank == "mock") {
         await this.sleep(2000);
-        console.log("marking mock job:", jobRunId, "as", tx.result);
+        console.log("marking mock job:", jobRunId, "as", tx.mockResult);
         return this.chainlinkClient
-          .patchUpdateRun(jobRunId, tx.result);
+          .patchUpdateRun(jobRunId, tx.mockResult);
       };
 
       this.pendingJobs.add(jobRunId);

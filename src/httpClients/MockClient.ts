@@ -35,9 +35,9 @@ export class MockClientClass extends IHttpClient {
     // The status here is picked up by the event bus
     // which updates the jobRunId accordingly on the chainlink node.
     if (body.sender == "success@upi") {
-      res.status = "success";
+      res.mockResult = true;
     } else if (body.sender == "fail@upi") {
-      res.status = "errored";
+      res.mockResult = false;
     }
 
     return res;

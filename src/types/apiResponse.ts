@@ -10,9 +10,10 @@ export class Response {
 }
 
 export class CollectResponse extends Response {
-    refId: string;    // Our internal unique Id
-    txId: string;     // UPI system-wide unique tx Id
-    message: string;  // Details about the success/error
+    refId: string;       // Our internal unique Id
+    txId: string;        // UPI system-wide unique tx Id
+    message: string;     // Details about the success/error
+    mockResult?: boolean // Used for mocking result by MockClient
 }
 
 export class TxStatusResponse extends Response {

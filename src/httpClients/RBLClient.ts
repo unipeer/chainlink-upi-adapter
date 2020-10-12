@@ -101,7 +101,6 @@ export class RBLClientClass extends IHttpClient {
       hmac: "JiSKgtw6E2s88OJmd25GQQ==",
     };
 
-    console.log(js2xml.parse("generateauthtokenreq", reqBody));
     let init = this.initMerge({
       method: "POST",
       headers: {
