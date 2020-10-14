@@ -98,7 +98,7 @@ export class RBLClientClass extends IHttpClient {
       os: "Android",
       app: "com.rblbank.mobank",
       capability: "100",
-      hmac: "JiSKgtw6E2s88OJmd25GQQ==",
+      hmac: "bOv12oiym0fecOwyrH0J+g==",
     };
 
     let init = this.initMerge({
