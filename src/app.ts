@@ -16,7 +16,7 @@ app.post('/', function (req: Request, res: Response) {
   gcpservice(req, res);
 });
 
-app.post('/callback/:bank', function (req: Request, res: Response) {
+app.post('/api/v1/callback/:bank', function (req: Request, res: Response) {
     callbackHandle(req, res);
 });
 
