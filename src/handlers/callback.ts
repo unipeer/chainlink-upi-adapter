@@ -29,6 +29,6 @@ export const callbackHandle = async (req: any, res: any) => {
         res.type(type).status(statusCode).send(body);
       });
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
   }
 };
