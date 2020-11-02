@@ -1,3 +1,5 @@
+import { StatusCodes } from "http-status-codes";
+
 import {
   Request,
   CollectRequest,
@@ -14,7 +16,7 @@ import {
 } from "./handlers";
 
 import config from "./config";
-import {getHttpClient} from "./httpClients";
+import { getHttpClient } from "./httpClients";
 
 export class JobRequest {
   id: string;
@@ -59,14 +61,18 @@ export const createRequest = async (input: JobRequest) => {
         }
       );
     default:
-      throw { statusCode: 400, data: "Invalid method" };
+      throw { statusCode: StatusCodes.BAD_REQUEST, data: "Invalid method" };
   }
 };
 
 export const requestWrapper = async (req: any): Promise<JobResponse> => {
   let body: JobRequest = req.body;
   if (!auth(req.headers)) {
-    return { jobRunID: body.id, statusCode: 401, error: "Unauthorized" };
+    return {
+      jobRunID: body.id,
+      statusCode: StatusCodes.UNAUTHORIZED,
+      error: "Unauthorized",
+    };
   }
 
   let response = <JobResponse>{ jobRunID: body.id || "" };
@@ -81,7 +87,7 @@ export const requestWrapper = async (req: any): Promise<JobResponse> => {
     .catch(({ statusCode, data }) => {
       response.status = "errored";
       response.error = data || "Invalid method";
-      response.statusCode = statusCode || 400;
+      response.statusCode = statusCode || StatusCodes.BAD_REQUEST;
       return response;
     });
 };
@@ -94,7 +100,7 @@ export const gcpservice = async (req: any = {}, res: any): Promise<any> => {
 
 // createRequest() wrapper for AWS Lambda
 export const handler = async (
-  event: { body: JobRequest, headers: any },
+  event: { body: JobRequest; headers: any },
   context: any = {},
   callback: { (error: any, result: any): void }
 ): Promise<any> => {
