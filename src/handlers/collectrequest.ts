@@ -1,5 +1,6 @@
 import { v1 as uuidv1 } from "uuid";
 import fetch from "node-fetch";
+import { StatusCodes } from "http-status-codes";
 
 import { CollectRequest, CollectResponse } from "../types";
 import { IHttpClient } from "../httpClients";
@@ -11,7 +12,10 @@ export const collectRequestHandle = async (
   httpClient: IHttpClient
 ) => {
   if (!("amount" in data) || !("sender" in data) || !("receiver" in data)) {
-    throw { statusCode: 400, data: "missing required parameters" };
+    throw {
+      statusCode: StatusCodes.BAD_REQUEST,
+      data: "missing required parameters",
+    };
   }
 
   // Use the Chainlink Job Id as ref
@@ -28,7 +32,10 @@ export const collectRequestHandle = async (
       // bank else we tell the upstream their req was not successful, passing
       // the error message from the bank.
       if (!result.success) {
-        throw { statusCode: 500, data: result.message };
+        throw {
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          data: result.message,
+        };
       }
 
       Event.collectEvent.emit("start", <TxEvent>{
@@ -39,7 +46,7 @@ export const collectRequestHandle = async (
       });
 
       return {
-        statusCode: 201,
+        statusCode: StatusCodes.CREATED, // 201
         data: {
           status: "pending",
           ...result,
@@ -47,6 +54,6 @@ export const collectRequestHandle = async (
       };
     })
     .catch((error: Error) => {
-      throw { statusCode: 503, data: error };
+      throw { statusCode: StatusCodes.SERVICE_UNAVAILABLE, data: error };
     });
 };

@@ -1,30 +1,40 @@
 import fetch from "node-fetch";
+import { StatusCodes } from "http-status-codes";
 
 import { GetStatusRequest, TxStatusResponse } from "../types";
 import { IHttpClient } from "../httpClients";
 
 export const getTxStatusHandle = async (
   data: GetStatusRequest,
-  httpClient: IHttpClient,
+  httpClient: IHttpClient
 ) => {
   if (!("txId" in data)) {
-    throw { statusCode: 400, data: "missing required parameters" };
+    throw {
+      statusCode: StatusCodes.BAD_REQUEST,
+      data: "missing required parameters",
+    };
   }
 
   return httpClient
     .getTxStatus(data)
     .then((result: TxStatusResponse) => {
       if (!result.success) {
-        throw { statusCode: 500, data: result.message };
+        throw {
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          data: result.message,
+        };
       }
 
       return {
-        statusCode: 200,
+        statusCode: StatusCodes.OK,
         data: result,
       };
     })
     .catch((error: Error) => {
       console.log(error);
-      throw { statusCode: 503, data: error.message };
+      throw {
+        statusCode: StatusCodes.SERVICE_UNAVAILABLE,
+        data: error.message,
+      };
     });
 };

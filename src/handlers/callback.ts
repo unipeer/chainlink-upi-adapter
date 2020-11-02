@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { StatusCodes } from 'http-status-codes';
 
 import config from "../config";
 import {
@@ -28,6 +29,6 @@ export const callbackHandle = async (req: any, res: any) => {
         res.type(type).status(statusCode).send(body);
       });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
   }
 };

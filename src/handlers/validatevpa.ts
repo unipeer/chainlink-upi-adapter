@@ -1,5 +1,6 @@
 import { v1 as uuidv1 } from "uuid";
 import fetch from "node-fetch";
+import { StatusCodes } from "http-status-codes";
 
 import { ValidateVPARequest } from "../types";
 import { IHttpClient } from "../httpClients";
@@ -9,7 +10,10 @@ export const validateVPAHandle = async (
   httpClient: IHttpClient,
 ) => {
   if (!("vpa" in data)) {
-    throw { statusCode: 400, data: "missing required parameters" };
+    throw {
+      statusCode: StatusCodes.BAD_REQUEST,
+      data: "missing required parameters",
+    };
   }
 
   // Some bank API's need a shorter Id
@@ -23,11 +27,14 @@ export const validateVPAHandle = async (
     .validateVPA(body)
     .then((result: any) => {
       return {
-        statusCode: 200,
+        statusCode: StatusCodes.OK,
         data: result,
       };
     })
     .catch((error: Error) => {
-      throw { statusCode: 503, data: error.message };
+      throw {
+        statusCode: StatusCodes.SERVICE_UNAVAILABLE,
+        data: error.message,
+      };
     });
 };

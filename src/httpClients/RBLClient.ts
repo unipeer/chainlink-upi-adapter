@@ -4,6 +4,7 @@ import xmlParser from "xml2json";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { StatusCodes } from "http-status-codes";
 
 import config from "../config";
 
@@ -16,7 +17,7 @@ import {
   TxStatusResponse,
 } from "../types";
 
-import {IHttpClient} from "./IHttpClient";
+import { IHttpClient } from "./IHttpClient";
 
 class SessionParams {
   session: string;
@@ -72,7 +73,10 @@ export class RBLClientClass extends IHttpClient {
       .then((res) => {
         let result: any = Object.entries(res)[0][1];
         if (result.status === "0") {
-          throw { statusCode: 500, data: result.description };
+          throw {
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            data: result.description,
+          };
         }
         return { session: result.sessiontoken };
       });
@@ -115,7 +119,10 @@ export class RBLClientClass extends IHttpClient {
       .then((res) => {
         let result: any = Object.entries(res)[0][1];
         if (result.status === "0") {
-          throw { statusCode: 500, data: result.description };
+          throw {
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            data: result.description,
+          };
         }
         return { auth: result.token, ...params };
       });
@@ -155,7 +162,10 @@ export class RBLClientClass extends IHttpClient {
       .then((res) => {
         let result: any = Object.entries(res)[0][1];
         if (result.status === "0") {
-          throw { statusCode: 500, data: result.description };
+          throw {
+            statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            data: result.description,
+          };
         }
         return { txId: result.txnId, ...params };
       });
