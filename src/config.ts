@@ -7,7 +7,7 @@ const getBasicAuth = (user, pass) => {
   return `Basic ${base64}`;
 };
 
-export = {
+export default {
   EA_PORT: process.env.EA_PORT || 8080,     // Port this server will listen on
   PAY_TIMEOUT_MINS: 10,                     // Collect requests timeout/expire
   BANK: {
@@ -20,6 +20,13 @@ export = {
       bcagent: "Rki2160863",
       mrchOrgId: "rkicks",
       aggrOrgId: "rkicks",
+    },
+    cashfree: {
+      appid: process.env.CF_APP_ID,
+      secret: process.env.CF_KEY,
+      url: process.env.CF_CHECKOUT_URL,
+      verify_url: process.env.CF_URL,
+      callback_url: "https://bank.unipeer.exchange/api/v1/callback/cashfree"
     }
   },
   NODE_URL: process.env.NODE_URL,

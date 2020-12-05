@@ -21,7 +21,10 @@ export class TxStatusResponse extends Response {
     txStatus: TxStatus;
     txSuccess: boolean;
     message: string;  // Details about the success/error
-    sender: string;
-    receiver: string;
     custRRN: string;
+}
+
+export class ValidateVPAResponse extends Response {
+    valid: boolean;
+    name?: string;     // Name of user
 }

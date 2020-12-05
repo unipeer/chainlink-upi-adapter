@@ -8,6 +8,7 @@ import {ICallbackClient} from "./ICallbackClient";
 import {RBLClient} from "./RBLClient";
 import {RBLCallback} from "./RBLCallback";
 import {MockClient} from "./MockClient";
+import {CashFreeClient} from "./CashFreeClient";
 
 export const getHttpClient = (name: string): IHttpClient => {
   switch (name) {
@@ -15,6 +16,8 @@ export const getHttpClient = (name: string): IHttpClient => {
       return MockClient;
     case RBLClient.getName():
       return RBLClient;
+    case CashFreeClient.getName():
+      return CashFreeClient;
     default:
       throw Error("unknow name");
   }

@@ -44,11 +44,6 @@ export class EventService {
       setTimeout(() => {
         this.pollTxStatus(tx);
       }, config.PAY_TIMEOUT_MINS * 3600 * 1000 /* X mins */);
-
-      // FIXME: only for UAT. Remove in production
-      setTimeout(() => {
-        this.pollTxStatus(tx);
-      }, 2 * 1000 /* 2 seconds */);
     });
 
     this.collectEvent.on("stop", async (jobRunId: string) => {
@@ -68,7 +63,7 @@ export class EventService {
         if (this.pendingJobs.has(jobRunId) && res.txStatus != TxStatus.PENDING) {
           this.chainlinkClient
             .patchUpdateRun(jobRunId, res.txSuccess)
-            .then((res) => Event.collectEvent.emit("stop", jobRunId));
+            .then((_) => Event.collectEvent.emit("stop", jobRunId));
         }
       })
       .catch((e) => console.error(e))

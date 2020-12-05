@@ -1,4 +1,4 @@
-import fetch, { Headers, RequestInit, Response } from "node-fetch";
+import fetch, { RequestInit } from "node-fetch";
 import * as js2xml from "js2xmlparser";
 import xmlParser from "xml2json";
 import dayjs from "dayjs";
@@ -12,6 +12,7 @@ import {
   CollectBody,
   GetStatusRequest,
   ValidateVPARequest,
+  ValidateVPAResponse,
   CollectResponse,
   TxStatus,
   TxStatusResponse,
@@ -285,14 +286,12 @@ export class RBLClientClass extends IHttpClient {
             Object.keys(result.txnerrorcode).length !== 0
               ? result.txnerrorcode
               : result.txnstatus,
-          sender: result.payeraddr,
-          receiver: result.payeeaddr,
           custRRN: result.custref,
         };
       });
   }
 
-  public async validateVPA(body: ValidateVPARequest): Promise<any> {
+  public async validateVPA(body: ValidateVPARequest): Promise<ValidateVPAResponse> {
     let getBody = (params: AuthTokenParams) => ({
       header: {
         sessiontoken: params.session,
@@ -338,8 +337,8 @@ export class RBLClientClass extends IHttpClient {
         return {
           // Here status returned is of VPA not API. :/
           success: result.status == 1,
-          message: result.description as string,
-          refId: body.refId,
+          valid: result.status == 1,
+          name: result.description,
         };
       });
   }
