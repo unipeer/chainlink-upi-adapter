@@ -1,4 +1,5 @@
 import fetch, { RequestInit } from "node-fetch";
+import crypto from "crypto";
 
 import config from "../config";
 
@@ -13,6 +14,16 @@ import {
 } from "../types";
 
 import { IHttpClient } from "./IHttpClient";
+
+const createSignature = (data: Object, secretKey: string) => {
+  let signature = "";
+  let keys = Object.keys(data);
+  keys.sort();
+  keys.forEach((key)=>{
+      signature+= key+data[key];
+  });
+  return crypto.createHmac('sha256', secretKey).update(signature).digest('base64');
+}
 
 export class CashFreeClientClass extends IHttpClient {
   private readonly init: RequestInit;
@@ -36,8 +47,8 @@ export class CashFreeClientClass extends IHttpClient {
   public async collectRequest(body: CollectBody): Promise<CollectResponse> {
     const path = config.BANK.cashfree.url;
 
-    const reqbody = {
-      appid: config.BANK.cashfree.appid,
+    const reqBody: any = {
+      appId: config.BANK.cashfree.appid,
       secretKey: config.BANK.cashfree.secret,
       orderId: body.refId,
       orderAmount: body.amount,
@@ -45,20 +56,21 @@ export class CashFreeClientClass extends IHttpClient {
       customerName: "Test",
       customerPhone: "9234567890",
       customerEmail: "test@gmail.com",
-      returnUrl: "",
+      returnUrl: "https://example.com",
       notifyUrl: config.BANK.cashfree.callback_url,
       paymentOption: "upi",
       responseType: "json",
       upi_vpa: body.sender,
-      signature: "", // TODO
     };
+
+    reqBody.signature = createSignature(reqBody, config.BANK.cashfree.secret);
 
     let init = this.initMerge({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(reqbody),
+      body: JSON.stringify(reqBody),
     });
 
      return fetch(path, init)
