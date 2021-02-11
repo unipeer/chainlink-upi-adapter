@@ -1,12 +1,15 @@
 # UPI 2.0 External Adapter
 
-## TODO
+This is a Chainlink External Adapter for connecting to a UPI
+(Unified Payments Interface) API provided
+by a partner bank or a PSP (Payment Service Provider).
 
-* Add bug reporting
-* Add logging collector/debugging
-* Add metrics monitoring
+This adapter has the necessary interfaces to add and support more than one bank API
+providers.
 
-* Have a scheduling mechanism for refreshing bank session token.
+Currently there is existing support for these API providers:
+* [RBL Bank][1]
+* [Cashfree][2]
 
 ## How to use
 
@@ -34,109 +37,80 @@ zip -r cl-ea.zip .
 ## Run with Docker
 
 ```bash
-docker build . -t paypal-adapter
+docker build . -t upi-adapter
 docker run -d \
     -p 8080:8080 \
     -e EA_PORT=8080 \
-    -e CLIENT_ID="Your_client_id" \
-    -e CLIENT_SECRET="Your_client_secret" \
-    paypal-adapter
+    --env-file .env
+    upi-adapter
 ```
 
 ## Environment variables
 
-| Variable      |               | Description | Example |
-|---------------|:-------------:|------------- |:---------:|
-| `MODE`     | *Optional*  | `LIVE` or `SANDBOX` | `SANDBOX` |
-| `CLIENT_ID`  | **Required**  | Your PayPal Client ID | `EBWKjlELKMYqRNQ6sYvFo64FtaRLRR5BdHEESmha49TM` |
-| `CLIENT_SECRET`  | **Required**  | Your PayPal Client Secret | `EO422dn3gQLgDbuwqTjzrFgFtaRLRR5BdHEESmha49TM` |
-| `API_METHOD` | *Optional* | Set a specific method to use for this adapter. Overwrites `method` in request body. | `sendPayout` |
+For a complete list of environment variable required see `src/config.ts`.
 
-To get PayPal developer credentials, please check out https://developer.paypal.com/.
+You need to set atleast the chainlink NODE_* environment variables and any other
+bank API related parameters as env variables.
 
 ## Testing
 
 Before you start testing, make sure you have necessary PayPal developer credentials set up.
 Set the `MODE` env variable to `sandbox`.
 
-In order to test sending payouts, make sure your facilitator account is funded.
-Also make sure you are sending in the default currency of your account.
-Receiver should be your "buyer" account.
-These env vars can be set with `TEST_CURRENCY` and `TEST_RECEIVER`, as well as `TEST_AMOUNT`.
-
 To test the getPayout method with another payout other than the one created in the test, set the `TEST_PAYOUT_ID` env var.
+
+## Available banks
+
+The `src/httpClients/index.ts` file has the up to date list of supported banks.
+The bank can be specified by the `bank` key in the request body.
+
+Currently accepted values for the `bank` field are:
+* `mock`
+* `rbl`
+* `cashfree`
 
 ## Available methods
 
 Method can be specified by the `method` key in the request body or the `API_METHOD` environment variable. If the
 environment variable is set, it takes precedence over the method specified in the request body.
 
-### sendPayout
+### collectRequest
 
-Send a payout with the Payouts API.
-
-#### Request
-
-| Variable | Type |   | Description |
-|----------|------|---|-------------|
-| `amount` | Integer, decimal | **Required** | Amount to send. Please refer to the [PayPal docs](https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#definition-currency). |
-| `currency` | String | *Optional* | Three-character ISO-4217 currency code. Defaults to `USD`. Please refer to the [full list of available currencies](https://developer.paypal.com/docs/integration/direct/rest/currency-codes/). |
-| `receiver` | String | **Required** | Receiver of the payout |
-| `recipient_type` | String | *Optional* | The type of `receiver`. Can be one of `EMAIL`, `PHONE` and `PAYPAL_ID`. Defaults to `EMAIL`. |
-| `note` | String | *Optional* | Custom note for this payout |
-| `sender_item_id` | String | *Optional* | Custom sender-specified ID for this payout |
-| `email_subject` | String | *Optional* | Custom email subject for the payment notification |
-| `email_message` | String | *Optional* | Custom email message for the payment notification |
-
-Please refer to the PayPal docs for more information on each parameter: https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_create
-
-#### Response
-
-```json
-{
-  "result":"5UXD2E8A7EBQJ",
-   "batch_header":{
-      "sender_batch_header":{
-         "sender_batch_id":"Payouts_2018_100008",
-         "email_subject":"You have a payout!",
-         "email_message":"You have received a payout! Thanks for using our service!"
-      },
-      "payout_batch_id":"5UXD2E8A7EBQJ",
-      "batch_status":"PENDING"
-   }
-}
-```
-
-### getPayout
-
-Get details on a payout.
+Send a payout with the collectRequest API.
 
 #### Request
 
 | Variable | Type |   | Description |
 |----------|------|---|-------------|
-| `type` | String | *Optional* | Type of payout to look up. One of `ITEM` and `BATCH`. Defaults to `BATCH`. |
-| `payout_id` | String | **Required** | Payout item ID to look up |
+| `amount` | Integer, decimal | **Required** | Amount to request from the payer VPA. |
+| `sender` | String | **Required** | The VPA/UPI ID of the payer |
+| `receiver` | String | **Required** | The VPA/UPI ID of the payee |
+| `note` | String | *Optional* | Custom note for this collect request |
 
-Please refer to the PayPal docs for more information on each parameter: https://developer.paypal.com/docs/api/payments.payouts-batch/v1/#payouts_create
+Please refer to the Bank API documentation for more information on each parameter.
 
-#### Response
+### getStatus
 
-```json
-{
-   "result":"5UXD2E8A7EBQJ",
-   "batch_header":{
-      "sender_batch_header":{
-         "sender_batch_id":"Payouts_2018_100008",
-         "email_subject":"You have a payout!",
-         "email_message":"You have received a payout! Thanks for using our service!"
-      },
-      "payout_batch_id":"5UXD2E8A7EBQJ",
-      "batch_status":"PENDING"
-   }
-}
-```
+Get details of a transaction.
+
+#### Request
+
+| Variable | Type |   | Description |
+|----------|------|---|-------------|
+| `txId` | String | **Required** | The transaction ID of the payment to look up |
+
+Please refer to the Bank API documentation for more information on each parameter.
+
+## TODO
+
+- [ ] Add bug reporting
+- [ ] Add logging collector/debugging
+- [ ] Add metrics monitoring
+- [ ] Have a scheduling mechanism for refreshing bank session token.
 
 ## Disclaimer
 
-In order to use this adapter, you will need to create an account with and obtain credentials from PayPal and agree to and comply with PayPal’s applicable terms, conditions and policies.  In no event will SmartContract Chainlink Limited SEZC be liable for your or your user’s failure to comply with any or all of PayPal’s terms, conditions or policies or any other applicable license terms.
+In order to use this adapter, you will need to create an account with and obtain credentials from a payments bank acting as a PSP for the UPI payments network and agree to and comply with their applicable terms, conditions and policies.
+
+[1]: https://developer.rblbank.com/content/upi-collection-api-product
+[2]: https://dev.cashfree.com/payment-gateway/payments/upi
