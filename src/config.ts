@@ -17,9 +17,9 @@ export default {
       password: process.env.RBL_PASSWORD,
       auth: process.env.RBL_AUTH,
       callback_key: process.env.RBL_KEY,
-      bcagent: "Rki2160863",
-      mrchOrgId: "rkicks",
-      aggrOrgId: "rkicks",
+      bcagent: "replaceme",
+      mrchOrgId: "replaceme",
+      aggrOrgId: "replaceme",
     },
     cashfree: {
       appid: process.env.CF_APP_ID,
@@ -29,7 +29,7 @@ export default {
       callback_url: "https://bank.unipeer.exchange/api/v1/callback/cashfree"
     }
   },
-  NODE_URL: process.env.NODE_URL,
-  NODE_AUTH: process.env.NODE_AUTH,
-  NODE_AUTH_OUT: process.env.NODE_AUTH_OUT,
+  NODE_URL: process.env.NODE_URL,           // chainlink node url
+  NODE_AUTH: process.env.NODE_AUTH,         // chainlink node bridge incoming request token
+  NODE_AUTH_OUT: process.env.NODE_AUTH_OUT, // chainlink node bridge outgoing request token
 }
