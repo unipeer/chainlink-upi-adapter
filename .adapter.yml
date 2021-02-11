@@ -1,0 +1,15 @@
+name: UPI
+description: An Adapter for the UPI 2.0 Payments API.
+node_identifier: upi
+platforms:
+  - Docker
+data_sources:
+  - name: RBL Bank
+    url: https://developer.rblbank.com/content/upi-collection-api-product
+  - name: CashFree API
+    url: https://dev.cashfree.com/payment-gateway/payments/upi
+parameters:
+  - `bank`
+  - `method`
+  - `amount`, `sender`, `receiver`, `note`: for the `collectrequest` method
+  - `txId`: for the `getstatus` method
