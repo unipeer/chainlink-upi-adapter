@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<collectrequest>
+  <header>
+    <sessiontoken>8D44DAAE2F0C6F2F1952EC1C1DA1B967F5F94889F764A92CF2F37CBF5E481EBBF4A964837D16A63038574F4EFD1FEDF873697F5C284222AE7861A5EEC5D50D773F291E45</sessiontoken>
+    <bcagent>Rki2160863</bcagent>
+  </header>
+  <mrchOrgId>rkicks</mrchOrgId>
+  <aggrOrgId>rkicks</aggrOrgId>
+  <note>Pay please</note>
+  <validupto>2020-10-05 00:00:00</validupto>
+  <refId>124223411299</refId>
+  <refUrl>http://google.com</refUrl>
+<orgTxnId>1234</orgTxnId>
+<txnId>RNB22a90175ae2e43e7b21fd3ebcdb2dc14</txnId>
+  <mobile>9234567890</mobile>
+  <geocode>34.7273,74.8278</geocode>
+  <location>India</location>
+  <ip>192.68.0.12</ip>
+  <type>MOB</type>
+  <id>sdfa</id>
+  <os>Android</os>
+  <app>com.rblbank.mobank</app>
+  <capability>100</capability>
+<hmac>e9de78fe-3776-4752-ac92-bbbfe2862230</hmac>
+<payeraddress>riya49@rbl</payeraddress>
+<payername>RBL</payername>
+<payeeaddress>satyakam@rbl</payeeaddress>
+<payeename>Partner</payeename>
+<amount>100</amount>
+</collectrequest>
