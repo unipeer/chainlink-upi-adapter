@@ -43,7 +43,7 @@
     "express": "^4.17.1",
     "express-xml-bodyparser": "^0.3.0",
     "js2xmlparser": "^4.0.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "uuid": "^8.3.0",
     "xml2json": "^0.12.0"
   }
